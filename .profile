@@ -37,9 +37,6 @@ shopt -s histappend
 # directory specific .envrc files
 eval "$(direnv hook bash)"
 
-# Source kubectl bash completion (generated with `kubectl completion bash > ~/.kube/bash_completion`)
-source ~/.kube/bash_completion
-
 # Bash completion for brew installed tools
 source "$(brew --prefix)/etc/bash_completion"
 

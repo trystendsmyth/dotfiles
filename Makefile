@@ -25,22 +25,20 @@ brew: \
 	brew upgrade
 
 	# GNU coreutils instead of outdated mac os defaults
-	brew install /
-		coreutils /
-		moreutils
+	brew install coreutils
+	brew install moreutils
 
-	brew install /
-		curl /
-		direnv /
-		git /
-		git-crypt /
-		nmap /
-		openssl /
-		python /
-		tree /
-		watch /
-		wget /
-		yarn --without-node
+	# assorted brew utilties
+	brew install curl
+	brew install direnv
+	brew install git
+	brew install nmap
+	brew install openssl
+	brew install python
+	brew install tree
+	brew install watch
+	brew install wget
+	brew install yarn --without-node
 
 /usr/local/bin/brew:
 	ruby -e "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -52,35 +50,36 @@ casks: \
 	brew tap caskroom/cask
 	# tap homebrew-cask-versions to install older apps
 	brew tap homebrew/cask-versions
-	# alfred for better search
-	brew cask install /
-		1password /
-		adium /
-		alfred /
-		dash /
-		docker /
-		dropbox /
-		evernote /
-		expressvpn /
-		filezilla /
-		firefox-developer-edition /
-		google-chrome /
-		iterm2 /
-		kaleidoscope /
-		macdown /
-		sequel-pro /
-		slack /
-		spotify /
-		sublime-text /
-		tower2 /
-		tunnelblick /
-		vagrant /
-		virtualbox /
-		visual-studio-code /
-		vlc
+
+	# assorted software geared towards dev work
+	brew cask install 1password6
+	brew cask install adium
+	brew cask install alfred
+	brew cask install dash
+	brew cask install docker
+	brew cask install dropbox
+	brew cask install evernote
+	brew cask install expressvpn
+	brew cask install filezilla
+	brew cask install firefox-developer-edition
+	brew cask install google-chrome
+	brew cask install iterm2
+	brew cask install kaleidoscope
+	brew cask install macdown
+	brew cask install sequel-pro
+	brew cask install slack
+	brew cask install spotify
+	brew cask install sublime-text
+	brew cask install tower2
+	brew cask install tunnelblick
+	brew cask install vagrant
+	brew cask install virtualbox
+	brew cask install visual-studio-code
+	brew cask install vlc
 
 fonts: \
 	/usr/local/bin/brew
+
 	# tap homebrew-fonts to install freely available fonts
 	brew tap caskroom/fonts
 	# install IBM Plex, an excellent modern font (https://www.ibm.com/plex/)
@@ -99,22 +98,15 @@ bash:
 node: \
 	~/.nvm
 	# latest stable version of node
-	nvm install stable
+	. ~/.nvm/nvm.sh && nvm install stable
 
-	npm install -g /
-		eslint /
-		express /
-		grunt-cli /
-		jshint /
-		jsxhint /
-		nodemon /
-		react-tools
+	# necessary npm packages for JS work
+	. ~/.nvm/nvm.sh && npm install -g eslint express grunt-cli jshint jsxhint nodemon react-tools
 
 ~/.nvm:
+	# setup node version manager
 	git clone https://github.com/creationix/nvm.git ~/.nvm
 	cd ~/.nvm && git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
-	source ~/.nvm/nvm.sh
-
 
 tmux: \
 	~/.tmux.conf \
@@ -124,6 +116,7 @@ vsc:
 	# Equivalent of VS [gui] Command Palette  "Shell command: Install 'code' command in PATH"
 	ln -sf /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
 
+	# Helpful VScode extensions
 	code --install-extension akamud.vscode-theme-onedark
 	code --install-extension dbaeumer.vscode-eslint
 	code --install-extension eg2.tslint
@@ -136,6 +129,7 @@ vsc:
 	code --install-extension ms-vscode.sublime-keybindings
 	code --install-extension ryanluker.vscode-coverage-gutters
 
+	# GIT config
 	git config --global core.editor "code -w -n"
 	git config --global core.pager "diff-so-fancy | less --tabs=1,5 -R"
 	git config --global pull.rebase true
@@ -275,7 +269,7 @@ defaults-NSGlobalDomain:
 	defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
 misc:
-	wget https://github.com/rupa/z/blob/master/z.sh -P ~/.dotfiles/
+	wget https://raw.githubusercontent.com/rupa/z/master/z.sh -P ~/.dotfiles/
 	echo '. ~/.dotfiles/z.sh' >> ~/.dotfiles/.bashrc
 
 dotfiles: $(DOTFILES)
@@ -286,6 +280,3 @@ dotfiles: $(DOTFILES)
 
 ~/.%:
 	cd ~ && ln -sv .dotfiles/$(notdir $@) $@
-
-~/.kube/bash_completion:
-	kubectl completion bash > ~/.kube/bash_completion
