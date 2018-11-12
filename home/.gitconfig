@@ -1,6 +1,9 @@
 [user]
   name = Tristan Smith
   email = treestone@gmail.com
+[core]
+  editor = code -w -n
+  pager = diff-so-fancy | less --tabs=1,5 -R
 [github]
   user = trystendsmyth
 [color]
@@ -35,3 +38,7 @@
   clean = git-lfs clean %f
   smudge = git-lfs smudge %f
   required = true
+[pull]
+  rebase = true
+[rebase]
+  autoStash = true

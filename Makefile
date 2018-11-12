@@ -1,5 +1,3 @@
-EXCLUDED_DOTFILES := .duti .git .gitignore .ssh
-DOTFILES := $(addprefix ~/, $(filter-out $(EXCLUDED_DOTFILES), $(wildcard .*)))
 DOTFILES_DIR := ${HOME}/.dotfiles
 
 # everything, geared towards to be run for setup and maintenance
@@ -10,9 +8,8 @@ all: \
 	bash \
 	node \
 	vsc \
-	tmux \
 	misc \
-	dotfiles \
+	stow \
 	defaults \
 
 # one-time setup of everything
@@ -40,13 +37,15 @@ brew: \
 	brew install openssl
 	brew install python
 	brew install speedtest-cli
+	brew install stow
+	brew install tmux
 	brew install tree
 	brew install watch
 	brew install wget
 	brew install yarn --without-node
 
 /usr/local/bin/brew:
-	ruby -e "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+	ruby -e "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null
 	brew analytics off
 
 casks: \
@@ -118,10 +117,6 @@ node: \
 	git clone https://github.com/creationix/nvm.git ~/.nvm
 	cd ~/.nvm && git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
 
-tmux: \
-	~/.tmux.conf \
-	brew install tmux
-
 vsc:
 	# Equivalent of VS [gui] Command Palette  "Shell command: Install 'code' command in PATH"
 	ln -sf /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
@@ -139,11 +134,19 @@ vsc:
 	code --install-extension ms-vscode.sublime-keybindings
 	code --install-extension ryanluker.vscode-coverage-gutters
 
-	# GIT config
-	git config --global core.editor "code -w -n"
-	git config --global core.pager "diff-so-fancy | less --tabs=1,5 -R"
-	git config --global pull.rebase true
-	git config --global rebase.autoStash true
+misc:
+	sudo wget https://someonewhocares.org/hosts/hosts -P /etc/
+	wget https://raw.githubusercontent.com/rupa/z/master/z.sh -P $(DOTFILES_DIR)
+
+stow:
+	mkdir -p $(HOME)/bin
+	mkdir -p $(HOME)/.ssh
+
+	stow bash
+	stow bin -t $(HOME)/bin
+	stow home
+	stow .ssh -t $(HOME)/.ssh
+	stow tmux
 
 defaults: \
 	default-Apps \
@@ -206,8 +209,8 @@ defaults: \
 
 default-Apps:
 	# default IINA (media files)
-	while read -r ext; do
-	  duti -s com.colliderli.iina "$ext" all
+	@while read -r ext; do \
+	  duti -s com.colliderli.iina "$ext" all; \
 	done <"${DOTFILES_DIR}/.duti/iina.txt"
 
 defaults-Dock:
@@ -284,21 +287,3 @@ defaults-NSGlobalDomain:
 	# Expand print panel by default
 	defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
 	defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
-
-misc:
-	sudo wget https://someonewhocares.org/hosts/hosts -P /etc/
-	wget https://raw.githubusercontent.com/rupa/z/master/z.sh -P $(DOTFILES_DIR)
-
-dotfiles: $(DOTFILES)
-
-~/.ssh:
-	mkdir $(HOME)/.ssh
-
-~/.ssh/config: \
-	~/.ssh
-	# Symlink .ssh/config
-	cd $(HOME)/.ssh && ln -sv $(DOTFILES_DIR)/.ssh/config .
-
-~/.%:
-	cd $(HOME) && ln -sv $(DOTFILES_DIR)/$(notdir $@) $@
-	cd $(HOME)/bin && ln -sv $(DOTFILES_DIR)/bin/$(&@) $@
