@@ -73,7 +73,6 @@ casks: \
 	brew cask install iterm2
 	brew cask install kaleidoscope
 	brew cask install keepingyouawake
-	brew cask install ksdiff
 	brew cask install macdown
 	brew cask install plex-media-player
 	brew cask install sequel-pro
@@ -289,7 +288,6 @@ defaults-NSGlobalDomain:
 misc:
 	sudo wget https://someonewhocares.org/hosts/hosts -P /etc/
 	wget https://raw.githubusercontent.com/rupa/z/master/z.sh -P $(DOTFILES_DIR)
-	echo '. ${DOTFILES_DIR}/z.sh' >> $(DOTFILES_DIR)/.bashrc
 
 dotfiles: $(DOTFILES)
 
@@ -303,4 +301,4 @@ dotfiles: $(DOTFILES)
 
 ~/.%:
 	cd $(HOME) && ln -sv $(DOTFILES_DIR)/$(notdir $@) $@
-	cd $(HOME) && ln -sv $(DOTFILES_DIR)/bin $(HOME)/bin
+	cd $(HOME)/bin && ln -sv $(DOTFILES_DIR)/bin/$(&@) $@
