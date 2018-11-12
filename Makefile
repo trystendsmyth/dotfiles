@@ -1,5 +1,6 @@
-EXCLUDED_DOTFILES := .git .gitignore .ssh
+EXCLUDED_DOTFILES := .duti .git .gitignore .ssh
 DOTFILES := $(addprefix ~/, $(filter-out $(EXCLUDED_DOTFILES), $(wildcard .*)))
+DOTFILES_DIR := ${HOME}/.dotfiles
 
 # everything, geared towards to be run for setup and maintenance
 all: \
@@ -29,12 +30,16 @@ brew: \
 	brew install moreutils
 
 	# assorted brew utilties
+	brew install bradp/vv/vv
 	brew install curl
 	brew install direnv
+	brew install duti
 	brew install git
+	brew install irssi
 	brew install nmap
 	brew install openssl
 	brew install python
+	brew install speedtest-cli
 	brew install tree
 	brew install watch
 	brew install wget
@@ -55,6 +60,7 @@ casks: \
 	brew cask install 1password6
 	brew cask install adium
 	brew cask install alfred
+	brew cask install cheatsheet
 	brew cask install dash
 	brew cask install docker
 	brew cask install dropbox
@@ -63,9 +69,13 @@ casks: \
 	brew cask install filezilla
 	brew cask install firefox-developer-edition
 	brew cask install google-chrome
+	brew cask install iina
 	brew cask install iterm2
 	brew cask install kaleidoscope
+	brew cask install keepingyouawake
+	brew cask install ksdiff
 	brew cask install macdown
+	brew cask install plex-media-player
 	brew cask install sequel-pro
 	brew cask install slack
 	brew cask install spotify
@@ -75,7 +85,6 @@ casks: \
 	brew cask install vagrant
 	brew cask install virtualbox
 	brew cask install visual-studio-code
-	brew cask install vlc
 
 fonts: \
 	/usr/local/bin/brew
@@ -86,6 +95,8 @@ fonts: \
 	brew cask install font-ibm-plex
 	# install Adobe Source Code Pro, an excellent mono space font for programming
 	brew cask install font-source-code-pro
+	# install Nerd fonts for terminal
+	brew cask install font-hack-nerd-font
 
 bash:
 	# newer version of bash
@@ -136,6 +147,7 @@ vsc:
 	git config --global rebase.autoStash true
 
 defaults: \
+	default-Apps \
 	defaults-Dock \
 	defaults-Finder \
 	defaults-NSGlobalDomain
@@ -193,6 +205,12 @@ defaults: \
 	# Kill affected applications
 	for app in Dock Safari Finder Photos SystemUIServer Terminal; do killall "$$app" >/dev/null 2>&1; done
 
+default-Apps:
+	# default IINA (media files)
+	while read -r ext; do
+	  duti -s com.colliderli.iina "$ext" all
+	done <"${DOTFILES_DIR}/.duti/iina.txt"
+
 defaults-Dock:
 	# Automatically hide and show the Dock
 	defaults write com.apple.dock autohide -bool true
@@ -238,7 +256,7 @@ defaults-Finder:
 	defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 	defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 	# Show the ~/Library folder
-	chflags nohidden ~/Library
+	chflags nohidden $(HOME)/Library
 
 defaults-NSGlobalDomain:
 	# Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)
@@ -269,14 +287,20 @@ defaults-NSGlobalDomain:
 	defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
 misc:
-	wget https://raw.githubusercontent.com/rupa/z/master/z.sh -P ~/.dotfiles/
-	echo '. ~/.dotfiles/z.sh' >> ~/.dotfiles/.bashrc
+	sudo wget https://someonewhocares.org/hosts/hosts -P /etc/
+	wget https://raw.githubusercontent.com/rupa/z/master/z.sh -P $(DOTFILES_DIR)
+	echo '. ${DOTFILES_DIR}/z.sh' >> $(DOTFILES_DIR)/.bashrc
 
 dotfiles: $(DOTFILES)
 
-~/.ssh/config:
+~/.ssh:
+	mkdir $(HOME)/.ssh
+
+~/.ssh/config: \
+	~/.ssh
 	# Symlink .ssh/config
-	cd ~/.ssh && ln -sv ../.dotfiles/.ssh/config .
+	cd $(HOME)/.ssh && ln -sv $(DOTFILES_DIR)/.ssh/config .
 
 ~/.%:
-	cd ~ && ln -sv .dotfiles/$(notdir $@) $@
+	cd $(HOME) && ln -sv $(DOTFILES_DIR)/$(notdir $@) $@
+	cd $(HOME) && ln -sv $(DOTFILES_DIR)/bin $(HOME)/bin

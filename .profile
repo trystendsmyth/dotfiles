@@ -40,6 +40,9 @@ eval "$(direnv hook bash)"
 # Bash completion for brew installed tools
 source "$(brew --prefix)/etc/bash_completion"
 
+# Bash completion for vv
+source $( echo $(which vv)-completions)
+
 # Aliases are managed here
 source ~/.bash_aliases
 

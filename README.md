@@ -24,3 +24,4 @@ This is mostly a shameless mashup of the following work :
 * https://github.com/Overbryd/dotfiles
 * https://github.com/mihaliak/dotfiles
 * https://github.com/mattorb/dotfiles
+* https://github.com/rootbeersoup/dotfiles/
