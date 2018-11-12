@@ -1,56 +1,66 @@
 #!/bin/bash
 
+set -e
+
 # Download dotfiles and begin installation
 
-download_dotfiles() {
-  echo "Downloading from repo..."
-  # Download repo tar.gz via curl
-  if [ -x "$(command -v curl)" ]; then
-    curl -L https://github.com/trystendsmyth/dotfiles/archive/master.tar.gz -o "$HOME/dotfiles-master.tar.gz"
-    tar xzf "$HOME/dotfiles-master.tar.gz"
-    rm "$HOME/dotfiles-master.tar.gz"
-    mv "$HOME/dotfiles-master" "$HOME/.dotfiles"
-
-  # Else, download repo tar.gz via wget
-  elif [ -x "$(command -v wget)" ]; then
-    wget -O "$HOME/dotfiles-master.tar.gz" https://github.com/trystendsmyth/dotfiles/archive/master.tar.gz
-    tar xzf "$HOME/dotfiles-master.tar.gz"
-    rm "$HOME/dotfiles-master.tar.gz"
-    mv "$HOME/dotfiles-master" "$HOME/.dotfiles"
+check_dotfiles() {
+  if [ -d "$HOME/.dotfiles" ]; then
+    read -p "Dotfiles already exists on this system. Overwrite? (y/n)" -n 1 -s -r
+    echo
+    if [[ ! $REPLY =~ ^[Nn]$ ]]
+    then
+        rm -rf "$HOME/.dotfiles"
+        download_dotfiles
+    fi
+  else
+    download_dotfiles
   fi
 }
 
-echo "Attempting to install new dotfiles..."
+download_dotfiles() {
+  echo "Downloading from repo..."
+  # If git isn't installed
+  if ! [ -x "$(command -v git)" ]; then
+    # Download repo tar.gz via curl
+    if [ -x "$(command -v curl)" ]; then
+      curl -L https://github.com/trystendsmyth/dotfiles/archive/master.tar.gz -o "$HOME/dotfiles-master.tar.gz"
+      tar xzf "$HOME/dotfiles-master.tar.gz"
+      rm "$HOME/dotfiles-master.tar.gz"
+      mv "$HOME/dotfiles-master" "$HOME/.dotfiles"
 
-if [ -d "$HOME/.dotfiles" ]; then
-  read -p "Dotfiles already exists on this system. Overwrite? (y/n)" -n 1 -s -r
-  echo
-  if [[ ! $REPLY =~ ^[Nn]$ ]]
-  then
-      rm -rf "$HOME/.dotfiles"
-      download_dotfiles
+    # Else, download repo tar.gz via wget
+    elif [ -x "$(command -v wget)" ]; then
+      wget -O "$HOME/dotfiles-master.tar.gz" https://github.com/trystendsmyth/dotfiles/archive/master.tar.gz
+      tar xzf "$HOME/dotfiles-master.tar.gz"
+      rm "$HOME/dotfiles-master.tar.gz"
+      mv "$HOME/dotfiles-master" "$HOME/.dotfiles"
+    fi
+  else
+    git clone --recursive https://github.com/trystendsmyth/dotfiles.git "$HOME/.dotfiles"
   fi
-else
-  download_dotfiles
-fi
+}
 
-# Verify successful download and print instructions for the user
-if [ -d "$HOME/.dotfiles" ]; then
-  # install Xcode and Command Line Tools
+install_xcode() {
   if [[ $(xcode-select -p 2> /dev/null || true) ]]; then
     echo "Xcode command tools already installed"
   else
-    while true; do
-      read -p "Install (f)ull Xcode or (c)ommand tools only? " -n 1 -r fc
-      echo
-      case $fc in
-          [Cc]* ) $(xcode-select --install); break;;
-          [Ff]* ) . "$HOME/.dotfiles/install-xcode.sh" "please"; break;;
-      esac
-    done
+    # https://github.com/timsutton/osx-vm-templates/blob/ce8df8a7468faa7c5312444ece1b977c1b2f77a4/scripts/xcode-cli-tools.sh
+    touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress;
+    PROD=$(softwareupdate -l |
+      grep "\*.*Command Line" |
+      head -n 1 | awk -F"*" '{print $2}' |
+      sed -e 's/^ *//' |
+      tr -d '\n')
+    softwareupdate -i "$PROD" --verbose;
   fi
+}
 
-  # initiate make process
+echo "Attempting to install Xcode command tools" && install_xcode
+echo "Attempting to install new dotfiles..." && check_dotfiles
+
+# Verify successful download and make
+if [ -d "$HOME/.dotfiles" ]; then
   make -C "$HOME/.dotfiles" install
 else
   printf "\\033[31mERROR:\\033[0m dotfiles either not downloaded or not extracted successfully\\n" >&2
