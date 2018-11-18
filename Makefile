@@ -79,6 +79,7 @@ casks: \
 	brew cask install spotify
 	brew cask install sublime-text
 	brew cask install tower2
+	brew cask install transmission
 	brew cask install tunnelblick
 	brew cask install vagrant
 	brew cask install virtualbox
@@ -96,7 +97,9 @@ fonts: \
 	# install Nerd fonts for terminal
 	brew cask install font-hack-nerd-font
 
-bash:
+bash: \
+	/usr/local/bin/brew
+
 	# newer version of bash
 	brew install bash
 	brew install bash-completion
@@ -117,7 +120,7 @@ node: \
 	git clone https://github.com/creationix/nvm.git ~/.nvm
 	cd ~/.nvm && git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
 
-vsc:
+vsc: casks
 	# Equivalent of VS [gui] Command Palette  "Shell command: Install 'code' command in PATH"
 	ln -sf /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
 
@@ -207,7 +210,7 @@ defaults: \
 	# Kill affected applications
 	for app in Dock Safari Finder Photos SystemUIServer Terminal; do killall "$$app" >/dev/null 2>&1; done
 
-default-Apps:
+default-Apps: brew
 	# default IINA (media files)
 	@while read -r ext; do \
 	  duti -s com.colliderli.iina "$ext" all; \
