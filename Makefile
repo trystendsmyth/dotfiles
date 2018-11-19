@@ -3,8 +3,6 @@ DOTFILES_DIR := ${HOME}/.dotfiles
 # everything, geared towards to be run for setup and maintenance
 all: \
 	brew \
-	casks \
-	fonts \
 	bash \
 	node \
 	vsc \
@@ -19,86 +17,17 @@ install: \
 
 brew: \
 	/usr/local/bin/brew
-	# upgrade all installed packages
+	# upgrade and clean all installed packages
+	brew update
 	brew upgrade
-
-	# GNU coreutils instead of outdated mac os defaults
-	brew install coreutils
-	brew install moreutils
-
-	# assorted brew utilties
-	brew install bradp/vv/vv
-	brew install curl
-	brew install direnv
-	brew install duti
-	brew install git
-	brew install irssi
-	brew install nmap
-	brew install openssl
-	brew install python
-	brew install speedtest-cli
-	brew install stow
-	brew install tmux
-	brew install tree
-	brew install watch
-	brew install wget
-	brew install yarn --without-node
+	brew cleanup -s
+	brew bundle
 
 /usr/local/bin/brew:
 	ruby -e "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null
 	brew analytics off
 
-casks: \
-	/usr/local/bin/brew
-	# tap homebrew-cask to install other osx related stuff
-	brew tap caskroom/cask
-	# tap homebrew-cask-versions to install older apps
-	brew tap homebrew/cask-versions
-
-	# assorted software geared towards dev work
-	brew cask install 1password6
-	brew cask install adium
-	brew cask install alfred
-	brew cask install cheatsheet
-	brew cask install dash
-	brew cask install docker
-	brew cask install dropbox
-	brew cask install evernote
-	brew cask install expressvpn
-	brew cask install filezilla
-	brew cask install firefox-developer-edition
-	brew cask install google-chrome
-	brew cask install iina
-	brew cask install iterm2
-	brew cask install kaleidoscope
-	brew cask install keepingyouawake
-	brew cask install macdown
-	brew cask install plex-media-player
-	brew cask install sequel-pro
-	brew cask install slack
-	brew cask install spotify
-	brew cask install sublime-text
-	brew cask install tower2
-	brew cask install transmission
-	brew cask install tunnelblick
-	brew cask install vagrant
-	brew cask install virtualbox
-	brew cask install visual-studio-code
-
-fonts: \
-	/usr/local/bin/brew
-
-	# tap homebrew-fonts to install freely available fonts
-	brew tap caskroom/fonts
-	# install IBM Plex, an excellent modern font (https://www.ibm.com/plex/)
-	brew cask install font-ibm-plex
-	# install Adobe Source Code Pro, an excellent mono space font for programming
-	brew cask install font-source-code-pro
-	# install Nerd fonts for terminal
-	brew cask install font-hack-nerd-font
-
-bash: \
-	/usr/local/bin/brew
+bash: brew
 
 	# newer version of bash
 	brew install bash
@@ -120,7 +49,7 @@ node: \
 	git clone https://github.com/creationix/nvm.git ~/.nvm
 	cd ~/.nvm && git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
 
-vsc: casks
+vsc: brew
 	# Equivalent of VS [gui] Command Palette  "Shell command: Install 'code' command in PATH"
 	ln -sf /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
 
@@ -139,7 +68,6 @@ vsc: casks
 
 misc:
 	sudo wget https://someonewhocares.org/hosts/hosts -P /etc/
-	wget https://raw.githubusercontent.com/rupa/z/master/z.sh -P $(DOTFILES_DIR)
 
 stow:
 	mkdir -p $(HOME)/bin
