@@ -4,9 +4,9 @@ DOTFILES_DIR := ${HOME}/.dotfiles
 all: \
 	brew \
 	bash \
+	zsh \
 	node \
 	vsc \
-	misc \
 	stow \
 	defaults \
 
@@ -28,13 +28,34 @@ brew: \
 	brew analytics off
 
 bash: brew
-
 	# newer version of bash
 	brew install bash
 	brew install bash-completion
+
+	stow bash
+
 	# change shell to homebrew bash
 	echo "/usr/local/bin/bash" | sudo tee -a /etc/shells
 	chsh -s /usr/local/bin/bash
+
+zsh: brew
+	# newer version of zsh
+	brew install zsh
+	brew install zsh-completions
+
+	@rm -rf ~/.oh-my-zsh
+	sh -c "$$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" </dev/null
+	@rm ~/.zshrc
+
+	git clone https://github.com/bhilburn/powerlevel9k.git "${HOME}/.oh-my-zsh/custom/themes/powerlevel9k"
+	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${HOME}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+	git clone https://github.com/zsh-users/zsh-autosuggestions "${HOME}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+
+	stow zsh
+
+	# change shell to homebrew zsh
+	echo "/usr/local/bin/zsh" | sudo tee -a /etc/shells
+	chsh -s /usr/local/bin/zsh
 
 node: \
 	~/.nvm
@@ -66,18 +87,19 @@ vsc: brew
 	code --install-extension ms-vscode.sublime-keybindings
 	code --install-extension ryanluker.vscode-coverage-gutters
 
-misc:
+hosts:
 	sudo wget https://someonewhocares.org/hosts/hosts -P /etc/
 
 stow:
 	mkdir -p $(HOME)/bin
 	mkdir -p $(HOME)/.ssh
 
-	stow bash
-	stow bin -t $(HOME)/bin
-	stow home
-	stow .ssh -t $(HOME)/.ssh
-	stow tmux
+	stow bash --restow
+	stow bin -t $(HOME)/bin --restow
+	stow home --restow
+	stow .ssh -t $(HOME)/.ssh --restow
+	stow tmux --restow
+	stow zsh --restow
 
 defaults: \
 	default-Apps \
@@ -136,7 +158,7 @@ defaults: \
 	networksetup -setdnsservers Wi-Fi 208.67.222.222 208.67.220.220
 
 	# Kill affected applications
-	for app in Dock Safari Finder Photos SystemUIServer Terminal; do killall "$$app" >/dev/null 2>&1; done
+	@for app in Dock Safari Finder Photos SystemUIServer; do killall "$$app" >/dev/null 2>&1; done
 
 default-Apps: brew
 	# default IINA (media files)

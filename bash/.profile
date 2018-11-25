@@ -44,7 +44,7 @@ source "$(brew --prefix)/etc/bash_completion"
 source $( echo $(which vv)-completions)
 
 # Aliases are managed here
-source ~/.bash_aliases
+source ~/.shell_aliases
 
 # Functions are managed here
-source ~/.bash_functions
+source ~/.shell_functions
