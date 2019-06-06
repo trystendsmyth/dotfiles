@@ -1,10 +1,10 @@
 ##### taps #####
 # tap homebrew-cask to install osx applications
 tap "caskroom/cask"
+# tap homebrew-fonts to install freely available fonts
+tap "homebrew/cask-fonts"
 # tap homebrew-cask-versions to install older apps
 tap "homebrew/cask-versions"
-# tap homebrew-fonts to install freely available fonts
-tap "caskroom/fonts"
 
 ##### brews #####
 # GNU coreutils instead of outdated mac os defaults
@@ -13,6 +13,7 @@ brew "moreutils"
 
 brew "bradp/vv/vv" || true
 brew "curl" || true
+brew "diff-so-fancy" || true
 brew "direnv" || true
 brew "duti"
 brew "git" || true
@@ -35,11 +36,11 @@ brew "yarn", args: ["without-node"] || true
 brew "z" || true
 
 ##### casks #####
-cask "1password6" || true
 cask "adium" || true
 cask "alfred" || true
 cask "cheatsheet" || true
 cask "dash" || true
+cask "dashlane" || true
 cask "docker" || true
 cask "dropbox" || true
 cask "evernote" || true
@@ -64,6 +65,11 @@ cask "tunnelblick" || true
 cask "vagrant" || true
 cask "virtualbox" || true
 cask "visual-studio-code" || true
+
+cask "dotnet-sdk" || true
+cask "mono-mdk" || true
+cask "unity" || true
+cask "unity-hub" || true
 
 ##### fonts #####
 # install IBM Plex, an excellent modern font (https://www.ibm.com/plex/)

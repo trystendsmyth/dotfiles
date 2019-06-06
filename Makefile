@@ -18,8 +18,8 @@ install: \
 brew: \
 	/usr/local/bin/brew
 	# upgrade and clean all installed packages
-	brew update
-	brew upgrade
+	brew update --verbose
+	brew upgrade --verbose
 	brew cleanup -s
 	brew bundle
 
@@ -77,15 +77,23 @@ vsc: brew
 	# Helpful VScode extensions
 	code --install-extension akamud.vscode-theme-onedark
 	code --install-extension dbaeumer.vscode-eslint
+	code --install-extension eamodio.gitlens
 	code --install-extension eg2.tslint
 	code --install-extension esbenp.prettier-vscode
 	code --install-extension kumar-harsh.graphql-for-vscode
 	code --install-extension mohsen1.prettify-json
 	code --install-extension mrmlnc.vscode-duplicate
-	code --install-extension ms-python.python
-	code --install-extension ms-vscode.csharp
 	code --install-extension ms-vscode.sublime-keybindings
 	code --install-extension ryanluker.vscode-coverage-gutters
+	## BE language support
+	code --install-extension ms-vscode.go
+	code --install-extension ms-python.python
+	# Unity dev support
+	code --install-extension ms-vscode.csharp
+	code --install-extension tobiah.unity-tools
+	code --install-extension unity.unity-debug
+	code --install-extension kleber-swf.unity-code-snippets
+	code --install-extension yclepticStudios.unity-snippets
 
 hosts:
 	sudo wget https://someonewhocares.org/hosts/hosts -P /etc/

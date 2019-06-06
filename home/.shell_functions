@@ -1,5 +1,7 @@
-cd() { builtin cd "$@"; ll; }               # Always list directory contents upon 'cd'
-#   extract:  Extract most know archives with one command
+# Always list directory contents upon 'cd'
+cd() { builtin cd "$@"; ll; }
+
+# Extract most know archives with one command
 extract () {
     if [ -f $1 ] ; then
       case $1 in
@@ -20,6 +22,32 @@ extract () {
          echo "'$1' is not a valid file"
      fi
 }
+
+# Compare original and gzipped file size
+gz() {
+	local origsize
+	origsize=$(wc -c < "$1")
+	local gzipsize
+	gzipsize=$(gzip -c "$1" | wc -c)
+	local ratio
+	ratio=$(echo "$gzipsize * 100 / $origsize" | bc -l)
+	printf "orig: %d bytes\\n" "$origsize"
+	printf "gzip: %d bytes (%2.2f%%)\\n" "$gzipsize" "$ratio"
+}
+
+# Get colors in manual pages
+man() {
+	env \
+		LESS_TERMCAP_mb="$(printf '\e[1;31m')" \
+		LESS_TERMCAP_md="$(printf '\e[1;31m')" \
+		LESS_TERMCAP_me="$(printf '\e[0m')" \
+		LESS_TERMCAP_se="$(printf '\e[0m')" \
+		LESS_TERMCAP_so="$(printf '\e[1;44;33m')" \
+		LESS_TERMCAP_ue="$(printf '\e[0m')" \
+		LESS_TERMCAP_us="$(printf '\e[1;32m')" \
+		man "$@"
+}
+
 trash () { command mv "$@" ~/.Trash ; }     # trash: Moves a file to the MacOS trash
 
 # tmux, be there and be named well
