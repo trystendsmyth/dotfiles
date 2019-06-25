@@ -1,6 +1,7 @@
 [user]
   name = Tristan Smith
-  email = treestone@gmail.com
+  # email = [EMAIL_HERE]
+  # signingkey = [KEY_HERE]
 [core]
   editor = code -w -n
   pager = diff-so-fancy | less --tabs=1,5 -R
@@ -38,7 +39,11 @@
   clean = git-lfs clean %f
   smudge = git-lfs smudge %f
   required = true
+[commit]
+  # gpgsign = true
 [pull]
   rebase = true
 [rebase]
-  autoStash = true
+  autostash = true
+[gpg]
+  program = /usr/local/bin/gpg

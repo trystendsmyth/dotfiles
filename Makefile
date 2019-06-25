@@ -104,6 +104,7 @@ stow:
 
 	stow bash --restow
 	stow bin -t $(HOME)/bin --restow
+	stow .gnupg -t $(HOME)/.gnupg --restow
 	stow home --restow
 	stow .ssh -t $(HOME)/.ssh --restow
 	stow tmux --restow
@@ -163,7 +164,7 @@ defaults: \
 	# sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.captive.control Active -bool false
 
 	# setup OpenDNS
-	networksetup -setdnsservers Wi-Fi 208.67.222.222 208.67.220.220
+	# networksetup -setdnsservers Wi-Fi 208.67.222.222 208.67.220.220
 
 	# Kill affected applications
 	@for app in Dock Safari Finder Photos SystemUIServer; do killall "$$app" >/dev/null 2>&1; done

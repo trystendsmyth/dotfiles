@@ -17,11 +17,13 @@ brew "diff-so-fancy" || true
 brew "direnv" || true
 brew "duti"
 brew "git" || true
+brew "gnupg" || true
 brew "httpie" || true
 brew "irssi" || true
 brew "m-cli" || true
 brew "nmap" || true
 brew "openssl" || true
+brew "pinentry-mac" || true
 brew "pipenv" || true
 brew "python" || true
 brew "speedtest-cli" || true
@@ -32,20 +34,20 @@ brew "tree" || true
 brew "watch" || true
 brew "wget" || true
 brew "wifi-password" || true
-brew "yarn", args: ["without-node"] || true
+brew "yarn", args: ["ignore-dependencies"] || true
 brew "z" || true
 
 ##### casks #####
 cask "adium" || true
 cask "alfred" || true
 cask "cheatsheet" || true
+cask "cyberduck" || true
 cask "dash" || true
 cask "dashlane" || true
 cask "docker" || true
 cask "dropbox" || true
 cask "evernote" || true
 cask "expressvpn" || true
-cask "filezilla" || true
 cask "firefox-developer-edition"|| true
 cask "gimp" || true
 cask "google-chrome" || true
