@@ -1,6 +1,11 @@
 # Always list directory contents upon 'cd'
 cd() { builtin cd "$@"; ll; }
 
+# kill process by specifying the port e.g. "killport 3000"
+killport() { 
+  port=$(lsof -n -i4TCP:$1 | grep LISTEN | awk '{ print $2 }') kill -9 $port 
+}
+
 # Extract most know archives with one command
 extract () {
     if [ -f $1 ] ; then

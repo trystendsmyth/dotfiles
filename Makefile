@@ -106,6 +106,7 @@ stow:
 	stow bin -t $(HOME)/bin --restow
 	stow .gnupg -t $(HOME)/.gnupg --restow
 	stow home --restow
+	stow kitty -t $(HOME)/.config/kitty --restow
 	stow .ssh -t $(HOME)/.ssh --restow
 	stow tmux --restow
 	stow zsh --restow

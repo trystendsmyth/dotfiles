@@ -49,13 +49,19 @@ cask "dropbox" || true
 cask "evernote" || true
 cask "expressvpn" || true
 cask "firefox-developer-edition"|| true
+cask "fork"|| true
 cask "gimp" || true
 cask "google-chrome" || true
 cask "iina" || true
+cask "imageoptim" || true
 cask "iterm2" || true
 cask "kaleidoscope" || true
 cask "keepingyouawake" || true
+cask "kitty" || true
+cask "kritta" || true
 cask "macdown" || true
+cask "ngrok" || true
+cask "numi" || true
 cask "plex-media-player" || true
 cask "sequel-pro" || true
 cask "slack" || true
