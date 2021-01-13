@@ -63,7 +63,7 @@ node: \
 	. ~/.nvm/nvm.sh && nvm install stable
 
 	# necessary npm packages for JS work
-	. ~/.nvm/nvm.sh && npm install -g eslint express grunt-cli jshint jsxhint nodemon react-tools
+	. ~/.nvm/nvm.sh && npm install -g eslint express jshint jsxhint nodemon react-tools
 
 ~/.nvm:
 	# setup node version manager
@@ -86,7 +86,7 @@ vsc: brew
 	code --install-extension ms-vscode.sublime-keybindings
 	code --install-extension ryanluker.vscode-coverage-gutters
 	## BE language support
-	code --install-extension ms-vscode.go
+	code --install-extension golang.go
 	code --install-extension ms-python.python
 	# Unity dev support
 	code --install-extension ms-vscode.csharp
@@ -100,6 +100,7 @@ hosts:
 
 stow:
 	mkdir -p $(HOME)/bin
+	mkdir -p $(HOME)/.gnupg
 	mkdir -p $(HOME)/.ssh
 
 	stow bash --restow

@@ -1,6 +1,6 @@
 ##### taps #####
 # tap homebrew-cask to install osx applications
-tap "caskroom/cask"
+tap "homebrew/cask"
 # tap homebrew-fonts to install freely available fonts
 tap "homebrew/cask-fonts"
 # tap homebrew-cask-versions to install older apps
@@ -58,11 +58,12 @@ cask "iterm2" || true
 cask "kaleidoscope" || true
 cask "keepingyouawake" || true
 cask "kitty" || true
-cask "kritta" || true
+cask "krita" || true
 cask "macdown" || true
 cask "ngrok" || true
 cask "numi" || true
 cask "plex-media-player" || true
+cask "postman" || true
 cask "sequel-pro" || true
 cask "slack" || true
 cask "spotify" || true
