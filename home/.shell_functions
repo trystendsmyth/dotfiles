@@ -53,6 +53,16 @@ man() {
 		man "$@"
 }
 
+squash() {
+  if [ $(git rev-parse --abbrev-ref HEAD) = "master" ]; then
+    echo "you're on master, definitely don't want to run this."
+    return
+  fi  
+  git reset $(git merge-base master $(git rev-parse --abbrev-ref HEAD)) 
+  git add -A
+  git commit -m $1
+}
+
 trash () { command mv "$@" ~/.Trash ; }     # trash: Moves a file to the MacOS trash
 
 # tmux, be there and be named well
@@ -60,6 +70,9 @@ function tms {
   local name=$(basename $PWD | sed -e s/\[^a-zA-Z0-9\\\//\$]/-/g -e s/--*/-/g)
   tmux new -s $name || tmux attach-session -t $name
 }
+
+port() { lsof -iTCP:$1 -sTCP:LISTEN; }
+port2() { nc -zv localhost $1; }
 
 # Start an HTTP server from a directory, optionally specifying the port
 function server() {
@@ -69,3 +82,12 @@ function server() {
   # And serve everything as UTF-8 (although not technically correct, this doesn’t break anything for binary files)
   python -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n\tmap[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port"
 }
+
+# Docker: bash into an existing container
+dkbash() { docker exec -it $1 /bin/bash; }
+
+# Docker: logs of an existing container
+dklog() { docker logs -f $1; }
+
+# Docker: list the names of existing containers
+dknames() { docker ps --format '{{.Names}}' }

@@ -18,6 +18,7 @@ brew "direnv" || true
 brew "duti"
 brew "git" || true
 brew "gnupg" || true
+brew "htop" || true
 brew "httpie" || true
 brew "irssi" || true
 brew "m-cli" || true
@@ -43,7 +44,6 @@ cask "alfred" || true
 cask "cheatsheet" || true
 cask "cyberduck" || true
 cask "dash" || true
-cask "dashlane" || true
 cask "docker" || true
 cask "dropbox" || true
 cask "evernote" || true
@@ -51,6 +51,7 @@ cask "expressvpn" || true
 cask "firefox-developer-edition"|| true
 cask "fork"|| true
 cask "gimp" || true
+cask "github-desktop" || true
 cask "google-chrome" || true
 cask "iina" || true
 cask "imageoptim" || true
