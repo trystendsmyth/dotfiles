@@ -1,7 +1,5 @@
 # set paths
-export PATH="$HOME/bin:$PATH"
-export PATH="$PATH:/usr/local/bin/"
-export PATH="/usr/local/git/bin:/usr/local/bin:/usr/local/:/usr/local/sbin:$PATH"
+export PATH="$PATH:$HOME/bin:/usr/local/git/bin:/usr/local/bin:/usr/local/:/usr/local/sbin"
 
 # set default editor
 export EDITOR='nano'
