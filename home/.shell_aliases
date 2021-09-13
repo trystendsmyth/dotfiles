@@ -1,4 +1,5 @@
 alias cp='cp -iv'                           # Preferred 'cp' implementation
+alias dir='builtin cd'                      # Default directory behavior
 alias mv='mv -iv'                           # Preferred 'mv' implementation
 alias rm='rm -iv'                           # Preferred 'rm' implementation
 alias mkdir='mkdir -pv'                     # Preferred 'mkdir' implementation

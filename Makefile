@@ -1,7 +1,34 @@
 DOTFILES_DIR := ${HOME}/.dotfiles
+UNAME        := $(shell uname -s)
 
-# everything, geared towards to be run for setup and maintenance
-all: \
+ifeq ($(UNAME), Darwin)
+  OS := macos
+else ifeq ($(UNAME), Linux)
+  OS := linux
+endif
+
+.PHONY: \
+	all \
+	bash \
+	brew \
+	defaults \
+	hosts \
+	install \
+	linux \
+	macos \
+	node \
+	stow \
+	vsc \
+	zsh
+
+all: install
+
+install: $(OS)
+
+linux: \
+	# TBD
+
+macos: \
 	brew \
 	bash \
 	zsh \
@@ -9,10 +36,6 @@ all: \
 	vsc \
 	stow \
 	defaults \
-
-# one-time setup of everything
-install: \
-	all \
 	~/.ssh/config
 
 brew: \
@@ -24,7 +47,7 @@ brew: \
 	brew bundle
 
 /usr/local/bin/brew:
-	ruby -e "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" </dev/null
+	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
 	brew analytics off
 
 bash: brew
@@ -32,7 +55,7 @@ bash: brew
 	brew install bash
 	brew install bash-completion
 
-	stow bash
+	stow bash --restow
 
 	# change shell to homebrew bash
 	echo "/usr/local/bin/bash" | sudo tee -a /etc/shells
@@ -51,7 +74,7 @@ zsh: brew
 	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${HOME}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
 	git clone https://github.com/zsh-users/zsh-autosuggestions "${HOME}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
 
-	stow zsh
+	stow zsh --restow
 
 	# change shell to homebrew zsh
 	echo "/usr/local/bin/zsh" | sudo tee -a /etc/shells
@@ -89,7 +112,7 @@ vsc: brew
 	code --install-extension golang.go
 	code --install-extension ms-python.python
 	# Unity dev support
-	code --install-extension ms-vscode.csharp
+	code --install-extension ms-dotnettools.csharp
 	code --install-extension tobiah.unity-tools
 	code --install-extension unity.unity-debug
 	code --install-extension kleber-swf.unity-code-snippets
@@ -99,18 +122,17 @@ hosts:
 	sudo wget https://someonewhocares.org/hosts/hosts -P /etc/
 
 stow:
-	mkdir -p $(HOME)/bin
-	mkdir -p $(HOME)/.gnupg
-	mkdir -p $(HOME)/.ssh
+	[ -d $(HOME)/bin ] || mkdir -p $(HOME)/bin
+	[ -d $(HOME)/.gnupg ] || mkdir -p $(HOME)/.gnupg
+	[ -d $(HOME)/.ssh ] || mkdir -p $(HOME)/.ssh
+	[ -d $(HOME)/.config/kitty ] || mkdir -p $(HOME)/.config/kitty
 
-	stow bash --restow
 	stow bin -t $(HOME)/bin --restow
 	stow .gnupg -t $(HOME)/.gnupg --restow
 	stow home --restow
 	stow kitty -t $(HOME)/.config/kitty --restow
 	stow .ssh -t $(HOME)/.ssh --restow
 	stow tmux --restow
-	stow zsh --restow
 
 defaults: \
 	default-Apps \

@@ -48,3 +48,6 @@ source ~/.shell_aliases
 source ~/.shell_functions
 
 . /usr/local/etc/profile.d/z.sh
+
+# Work related additions
+test -f ~/.work_profile && source ~/.work_profile

@@ -51,7 +51,7 @@ cask "expressvpn" || true
 cask "firefox-developer-edition"|| true
 cask "fork"|| true
 cask "gimp" || true
-cask "github-desktop" || true
+cask "github" || true
 cask "google-chrome" || true
 cask "iina" || true
 cask "imageoptim" || true

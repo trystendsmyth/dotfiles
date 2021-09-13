@@ -3,7 +3,10 @@
 # Download dotfiles and begin installation
 
 main() {
-  info "Attempting to install Xcode command tools" && install_xcode
+  if [[ $(uname -s) == "Darwin" ]]; then
+    info "Attempting to install Xcode command tools" && install_xcode
+  fi
+
   info "Attempting to install new dotfiles..." && check_dotfiles
 
   # Verify successful download and make

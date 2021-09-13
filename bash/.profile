@@ -49,3 +49,6 @@ source ~/.shell_aliases
 
 # Functions are managed here
 source ~/.shell_functions
+
+# Work related additions
+test -f ~/.work_profile && source ~/.work_profile
