@@ -1,5 +1,6 @@
-DOTFILES_DIR := ${HOME}/.dotfiles
+DOTFILES_DIR := $(HOME)/.dotfiles
 UNAME        := $(shell uname -s)
+BREW_CHECK 	 := type brew >/dev/null 2>/dev/null || $(MAKE) brew
 
 ifeq ($(UNAME), Darwin)
   OS := macos
@@ -8,7 +9,6 @@ else ifeq ($(UNAME), Linux)
 endif
 
 .PHONY: \
-	all \
 	bash \
 	brew \
 	defaults \
@@ -21,26 +21,31 @@ endif
 	vsc \
 	zsh
 
-all: install
+install: $(OS) ## Default install all by OS.
 
-install: $(OS)
+help:
+	@echo 'Usage:'
+	@echo '    make <target>'
+	@echo
+	@echo 'Targets:'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "    \033[0m%-10s\033[0m %s\n", $$1, $$2}'
 
-linux: \
-	# TBD
+linux: ## TBD (Manually install everything for Linux.)
 
-macos: \
-	brew \
-	bash \
-	zsh \
-	node \
-	vsc \
-	stow \
-	defaults \
-	~/.ssh/config
+macos: ## Manually install everything for MacOS.
+	@echo 'Installing for MacOS...'
+	$(MAKE) brew
+	$(MAKE) bash
+	$(MAKE) zsh
+	$(MAKE) node
+	$(MAKE) vsc
+	$(MAKE) stow
+	$(MAKE) defaults
+	[ -d $(HOME)/.ssh/config ] || mkdir -p $(HOME)/.ssh/config
+	softwareupdate -d -a
 
-brew: \
-	/usr/local/bin/brew
-	# upgrade and clean all installed packages
+brew: /usr/local/bin/brew ## Install brew and all applications.
+	@echo 'Updating all brew packages...'
 	brew update --verbose
 	brew upgrade --verbose
 	brew cleanup -s
@@ -50,29 +55,25 @@ brew: \
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
 	brew analytics off
 
-bash: brew
-	# newer version of bash
-	brew install bash
-	brew install bash-completion
-
+bash: ## Install an updated Bash shell.
+	$(BREW_CHECK)
+	@echo 'Updating bash...'
 	stow bash --restow
 
 	# change shell to homebrew bash
 	echo "/usr/local/bin/bash" | sudo tee -a /etc/shells
 	chsh -s /usr/local/bin/bash
 
-zsh: brew
-	# newer version of zsh
-	brew install zsh
-	brew install zsh-completions
-
+zsh: ## Install an updated Zsh shell and theming.
+	$(BREW_CHECK)
+	@echo 'Updating zsh / refreshing themes...'
 	@rm -rf ~/.oh-my-zsh
 	sh -c "$$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" </dev/null
 	@rm ~/.zshrc
 
-	git clone https://github.com/bhilburn/powerlevel9k.git "${HOME}/.oh-my-zsh/custom/themes/powerlevel9k"
-	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${HOME}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
-	git clone https://github.com/zsh-users/zsh-autosuggestions "${HOME}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+	git clone https://github.com/romkatv/powerlevel10k.git "$(HOME)/.oh-my-zsh/custom/themes/powerlevel10k"
+	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$(HOME)/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+	git clone https://github.com/zsh-users/zsh-autosuggestions "$(HOME)/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
 
 	stow zsh --restow
 
@@ -80,8 +81,8 @@ zsh: brew
 	echo "/usr/local/bin/zsh" | sudo tee -a /etc/shells
 	chsh -s /usr/local/bin/zsh
 
-node: \
-	~/.nvm
+node: ~/.nvm ## Install NVM and Node.
+	@echo 'Updating NVM and Node...'
 	# latest stable version of node
 	. ~/.nvm/nvm.sh && nvm install stable
 
@@ -93,7 +94,9 @@ node: \
 	git clone https://github.com/creationix/nvm.git ~/.nvm
 	cd ~/.nvm && git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
 
-vsc: brew
+vsc: ## Install all VSCode extensions.
+	$(BREW_CHECK)
+	@echo 'Install VSCode extensions'
 	# Equivalent of VS [gui] Command Palette  "Shell command: Install 'code' command in PATH"
 	ln -sf /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
 
@@ -118,10 +121,12 @@ vsc: brew
 	code --install-extension kleber-swf.unity-code-snippets
 	code --install-extension yclepticStudios.unity-snippets
 
-hosts:
+hosts: ## Optionally set hosts file.
+	@echo 'Set hosts file...'
 	sudo wget https://someonewhocares.org/hosts/hosts -P /etc/
 
-stow:
+stow: ## Set all home file references.
+	@echo 'Restowing home files...'
 	[ -d $(HOME)/bin ] || mkdir -p $(HOME)/bin
 	[ -d $(HOME)/.gnupg ] || mkdir -p $(HOME)/.gnupg
 	[ -d $(HOME)/.ssh ] || mkdir -p $(HOME)/.ssh
@@ -134,11 +139,12 @@ stow:
 	stow .ssh -t $(HOME)/.ssh --restow
 	stow tmux --restow
 
-defaults: \
-	default-Apps \
-	defaults-Dock \
-	defaults-Finder \
-	defaults-NSGlobalDomain
+defaults: ## Set OS defaults.
+	$(MAKE) default-Apps
+	$(MAKE) defaults-Dock
+	$(MAKE) defaults-Finder
+	$(MAKE) defaults-NSGlobalDomain
+
 	# Show remaining battery time as percentage
 	defaults write com.apple.menuextra.battery ShowPercent -string "YES"
 	# Enable AirDrop over Ethernet and on unsupported Macs running Lion
@@ -157,7 +163,7 @@ defaults: \
 	defaults write com.apple.BezelServices kDimTime -int 300
 
 	# Save screenshots to the desktop
-	defaults write com.apple.screencapture location -string "${HOME}/Desktop"
+	defaults write com.apple.screencapture location -string "$(HOME)/Desktop"
 	# Disable shadow in screenshots
 	defaults write com.apple.screencapture disable-shadow -bool true
 	# Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
@@ -193,13 +199,15 @@ defaults: \
 	# Kill affected applications
 	@for app in Dock Safari Finder Photos SystemUIServer; do killall "$$app" >/dev/null 2>&1; done
 
-default-Apps: brew
+default-Apps:
+	$(BREW_CHECK)
 	# default IINA (media files)
 	@while read -r ext; do \
 	  duti -s com.colliderli.iina "$ext" all; \
 	done <"${DOTFILES_DIR}/.duti/iina.txt"
 
 defaults-Dock:
+	$(BREW_CHECK)
 	# Automatically hide and show the Dock
 	defaults write com.apple.dock autohide -bool true
 	# Make Dock icons of hidden applications translucent
@@ -217,11 +225,28 @@ defaults-Dock:
 	# Bottom left screen corner → Start screen saver
 	defaults write com.apple.dock wvous-bl-corner -int 5
 	defaults write com.apple.dock wvous-bl-modifier -int 0
-	# clean up right side (persistent)
-	-defaults delete com.apple.dock persistent-others
-	# and add these folders
-	defaults write com.apple.dock persistent-others -array-add "$$(echo '{"tile-type": "directory-tile", "tile-data": {"displayas": 0, "file-type":2, "showas":1, "file-label":"Applications", "file-data":{"_CFURLString":"file:///Applications/","_CFURLStringType":15}}}' | plutil -convert xml1 - -o -)";
-	defaults write com.apple.dock persistent-others -array-add "$$(echo '{"tile-type": "directory-tile", "tile-data": {"displayas": 0, "file-type":2, "showas":1, "file-label":"Downloads", "file-data":{"_CFURLString":"file:///Users/tristan/Downloads/","_CFURLStringType":15}}}' | plutil -convert xml1 - -o -)";
+	# Don't show recent applications in the Dock
+	defaults write com.apple.dock show-recents -bool false
+	defaults write com.apple.dock recent-apps -array
+
+	dockutil --no-restart --remove all
+
+	dockutil --no-restart --add "/Applications/Safari.app"
+	dockutil --no-restart --add "/Applications/Google Chrome.app"
+	dockutil --no-restart --add "/Applications/Brave Browser.app"
+	dockutil --no-restart --add "/Applications/Firefox Developer Edition.app.app"
+	dockutil --no-restart --add "/Applications/Evernote.app"
+	dockutil --no-restart --add "/Applications/Notes.app"
+	dockutil --no-restart --add "/Applications/Messages.app"
+	dockutil --no-restart --add "/Applications/Facetime.app"
+	dockutil --no-restart --add "/Applications/VirtualBox.app"
+	dockutil --no-restart --add "/Applications/Visual Studio Code.app"
+	dockutil --no-restart --add "/Applications/Kitty.app"
+	dockutil --no-restart --add "/Applications/ExpressVPN.app"
+	dockutil --no-restart --add "/Applications/System Preferences.app"
+
+	dockutil --no-restart --add "/Applications" --section others --sort name --view grid
+	dockutil --no-restart --add "$(HOME)/Downloads" --section others --view list
 
 defaults-Finder:
 	# Automatically open a new Finder window when a volume is mounted

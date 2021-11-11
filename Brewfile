@@ -10,11 +10,18 @@ tap "homebrew/cask-versions"
 # GNU coreutils instead of outdated mac os defaults
 brew "coreutils"
 brew "moreutils"
+# newer version of bash
+brew "bash"
+brew "bash-completion"
+# newer version of zsh
+brew "zsh"
+brew "zsh-completions"
 
 brew "bradp/vv/vv" || true
 brew "curl" || true
 brew "diff-so-fancy" || true
 brew "direnv" || true
+brew "dockutil" || true
 brew "duti"
 brew "git" || true
 brew "gnupg" || true
@@ -22,6 +29,7 @@ brew "htop" || true
 brew "httpie" || true
 brew "irssi" || true
 brew "m-cli" || true
+brew "mas" || true
 brew "nmap" || true
 brew "openssl" || true
 brew "pinentry-mac" || true
@@ -41,6 +49,7 @@ brew "z" || true
 ##### casks #####
 cask "adium" || true
 cask "alfred" || true
+cask "brave-browser" || true
 cask "cheatsheet" || true
 cask "cyberduck" || true
 cask "dash" || true
@@ -65,6 +74,7 @@ cask "ngrok" || true
 cask "numi" || true
 cask "plex-media-player" || true
 cask "postman" || true
+cask "qlvideo" || true
 cask "sequel-pro" || true
 cask "slack" || true
 cask "spotify" || true
