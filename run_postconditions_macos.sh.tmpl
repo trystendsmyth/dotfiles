@@ -1,0 +1,5 @@
+#!/bin/bash
+{{ if (eq .chezmoi.os "darwin") }}
+# Kill affected applications
+@for app in Dock Safari Finder Photos SystemUIServer; do killall "$$app" >/dev/null 2>&1; done
+{{ end }}

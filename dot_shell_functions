@@ -2,8 +2,8 @@
 cd() { builtin cd "$@"; ll; }
 
 # kill process by specifying the port e.g. "killport 3000"
-killport() { 
-  port=$(lsof -n -i4TCP:$1 | grep LISTEN | awk '{ print $2 }') kill -9 $port 
+killport() {
+  port=$(lsof -n -i4TCP:$1 | grep LISTEN | awk '{ print $2 }') kill -9 $port
 }
 
 # Extract most know archives with one command
@@ -57,8 +57,8 @@ squash() {
   if [ $(git rev-parse --abbrev-ref HEAD) = "master" ]; then
     echo "you're on master, definitely don't want to run this."
     return
-  fi  
-  git reset $(git merge-base master $(git rev-parse --abbrev-ref HEAD)) 
+  fi
+  git reset $(git merge-base master $(git rev-parse --abbrev-ref HEAD))
   git add -A
   git commit -m $1
 }
@@ -91,3 +91,9 @@ dklog() { docker logs -f $1; }
 
 # Docker: list the names of existing containers
 dknames() { docker ps --format '{{.Names}}' }
+
+# Test shell load times
+shelltime() {
+  shell=${1-$SHELL}
+  for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
+}

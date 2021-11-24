@@ -1,7 +1,9 @@
+# Enable Zsh profiler
+zmodload zsh/zprof
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
 
 # set paths
 export PATH="$PATH:$HOME/bin:/usr/local/git/bin:/usr/local/bin:/usr/local/:/usr/local/sbin"
@@ -24,8 +26,10 @@ export BLOCKSIZE=1k
 # gpg
 export GPG_TTY=$(tty)
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# NVM plugin settings
+export NVM_AUTO_USE=true
+export NVM_COMPLETION=true
+export NVM_LAZY_LOAD=true
 
 # Ignores all one-word commands for more efficient bash history searching
 export HISTIGNORE=?
@@ -38,12 +42,23 @@ setopt appendhistory
 setopt sharehistory
 setopt incappendhistory
 
+# Let Chezmoi handle external updates
+DISABLE_AUTO_UPDATE="true"
+
+{{ if (eq .chezmoi.os "darwin") }}
 # directory specific .envrc files
 eval "$(direnv hook zsh)"
+{{ else if (eq .chezmoi.os "linux") }}
+[ -d /home/linuxbrew/.linuxbrew ] && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+{{ end }}
 
-# Zsh completion for brew installed tools
+# Zsh completion for brew
 FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
 
+# Set "Oh My Zsh" plugins
+plugins=(zsh-autosuggestions zsh-history-substring-search zsh-nvm zsh-syntax-highlighting z)
+
+# Zsh theme
 source ~/.zsh_theme
 
 # Aliases are managed here
@@ -51,8 +66,6 @@ source ~/.shell_aliases
 
 # Functions are managed here
 source ~/.shell_functions
-
-. /usr/local/etc/profile.d/z.sh
 
 # Work related additions
 test -f ~/.work_profile && source ~/.work_profile

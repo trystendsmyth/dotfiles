@@ -1,0 +1,45 @@
+#!/bin/bash
+{{ if (eq .chezmoi.os "darwin") }}
+# Add brew bash path to shells
+grep -qxF '/usr/local/bin/bash' /etc/shells || echo '/usr/local/bin/bash' >> /etc/shells
+
+# Add zsh bash path to shells and set as default
+grep -qxF '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' >> /etc/shells
+chsh -s /usr/local/bin/zsh
+
+# Install latest stable node and global packages
+nvm install stable && npm install -g eslint express jshint jsxhint nodemon react-tools
+
+# Equivalent of VS [gui] Command Palette  "Shell command: Install 'code' command in PATH"
+ln -sf /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
+
+# Helpful VScode extensions
+code --install-extension akamud.vscode-theme-onedark
+code --install-extension dbaeumer.vscode-eslint
+code --install-extension eamodio.gitlens
+code --install-extension eg2.tslint
+code --install-extension esbenp.prettier-vscode
+code --install-extension kumar-harsh.graphql-for-vscode
+code --install-extension mohsen1.prettify-json
+code --install-extension mrmlnc.vscode-duplicate
+code --install-extension ms-vscode.sublime-keybindings
+code --install-extension ryanluker.vscode-coverage-gutters
+## BE language support
+code --install-extension golang.go
+code --install-extension ms-python.python
+{{ if eq .workconfig "true" -}}
+code --install-extension redhat.java
+{{ else }}
+# Unity dev support
+code --install-extension ms-dotnettools.csharp
+code --install-extension tobiah.unity-tools
+code --install-extension unity.unity-debug
+code --install-extension kleber-swf.unity-code-snippets
+code --install-extension yclepticStudios.unity-snippets
+{{ end }}
+
+# Default IINA (media files)
+@while read -r ext; do \
+    duti -s com.colliderli.iina "$ext" all; \
+done <"~/.config/.duti/iina.txt"
+{{ end }}

@@ -1,0 +1,32 @@
+{{- $email := promptString "Email" -}}
+{{- $fullname := promptString "Full name" -}}
+{{- $gituser := promptString "Git username" -}}
+{{- $minimalinstall := promptBool "Minimal install (y/n)" -}}
+{{- $workconfig := promptBool "Work Computer (y/n)" -}}
+
+{{- $bwclientid := "" -}}
+{{- $bwclientsecret := "" -}}
+{{- $secrets := false -}}
+
+{{- if eq (env "SECRETS") "true" -}}
+{{- $bwclientid = promptString "Bitwarden client ID" -}}
+{{- $bwclientsecret = promptString "Bitwarden client secret" -}}
+{{- $secrets = true -}}
+{{- end -}}
+
+sourceDir = {{ .chezmoi.sourceDir | quote }}
+
+[data]
+    email = {{ $email | quote }}
+    fullname = {{ $fullname | quote }}
+    gituser = {{ $gituser | quote }}
+    minimalinstall = {{ $minimalinstall | quote }}
+    workconfig = {{ $workconfig | quote }}
+
+    secrets = {{ $secrets | quote }}
+    bwclientid = {{ $bwclientid | quote }}
+    bwclientsecret = {{ $bwclientsecret | quote }}
+
+[edit]
+    command = "code"
+    args = ["--wait"]

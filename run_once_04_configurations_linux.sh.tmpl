@@ -1,0 +1,9 @@
+#!/bin/bash
+{{ if (eq .chezmoi.os "linux") }}
+# sudo wget https://someonewhocares.org/hosts/hosts -P /etc/
+
+# Set correct permissions for GPG
+chown -R $(whoami) ~/.gnupg/
+chmod 700 ~/.gnupg/*
+chmod 700 ~/.gnupg
+{{ end }}

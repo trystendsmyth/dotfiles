@@ -1,0 +1,5 @@
+{{ if eq .workconfig "true" }}
+{{-   if eq .secrets "true" -}}
+{{- (bitwarden "item" "work_profile").notes -}}
+{{-   end -}}
+{{ end }}

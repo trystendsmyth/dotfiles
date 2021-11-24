@@ -1,0 +1,14 @@
+README.md
+LICENSE
+install.ps1
+install.sh
+.gitignore
+
+{{- if eq .secrets "false" }}
+.gnupg/pubring.kbx
+.gnupg/trustdb.gpg
+.gnupg/private-keys-v1.d/2C8C688D573F0CC6673F7F16D3C85485F8D03A8C.key
+.gnupg/private-keys-v1.d/DE8259F541274FFAA21B84AAD2B0093D9B4169B2.key
+.ssh/id_rsa.pub
+.ssh/id_rsa
+{{- end }}

@@ -1,10 +1,17 @@
+#!/bin/bash
+{{ if (eq .chezmoi.os "darwin") }}
+brew bundle --no-lock --file=/dev/stdin <<EOF
 ##### taps #####
 # tap homebrew-cask to install osx applications
 tap "homebrew/cask"
 # tap homebrew-fonts to install freely available fonts
 tap "homebrew/cask-fonts"
+{{-   if eq .workconfig "true" }}
+tap "AdoptOpenJDK/openjdk"
+{{-   else }}
 # tap homebrew-cask-versions to install older apps
 tap "homebrew/cask-versions"
+{{-   end }}
 
 ##### brews #####
 # GNU coreutils instead of outdated mac os defaults
@@ -17,7 +24,11 @@ brew "bash-completion"
 brew "zsh"
 brew "zsh-completions"
 
+{{-   if eq .workconfig "true" }}
+brew "sonar-scanner" || true
+{{-   else }}
 brew "bradp/vv/vv" || true
+{{-   end }}
 brew "curl" || true
 brew "diff-so-fancy" || true
 brew "direnv" || true
@@ -30,6 +41,7 @@ brew "httpie" || true
 brew "irssi" || true
 brew "m-cli" || true
 brew "mas" || true
+brew "newsboat" || true
 brew "nmap" || true
 brew "openssl" || true
 brew "pinentry-mac" || true
@@ -40,23 +52,44 @@ brew "stow"
 brew "tmux"
 brew "trash" || true
 brew "tree" || true
+brew "vim" || true
 brew "watch" || true
+brew "weechat" || true
 brew "wget" || true
 brew "wifi-password" || true
 brew "yarn", args: ["ignore-dependencies"] || true
-brew "z" || true
 
 ##### casks #####
+{{-   if eq .minimalinstall "false" }}
+{{-     if eq .workconfig "true" }}
+cask "adoptopenjdk8" || true
+cask "adoptopenjdk11" || true
+cask "cloudapp" || true
+cask "robo-3t" || true
+{{-     else }}
 cask "adium" || true
 cask "alfred" || true
+cask "evernote" || true
+cask "expressvpn" || true
+cask "numi" || true
+cask "plex-media-player" || true
+cask "sublime-text" || true
+cask "tower2" || true
+cask "transmission" || true
+cask "tunnelblick" || true
+
+cask "dotnet-sdk" || true
+cask "mono-mdk" || true
+cask "unity" || true
+cask "unity-hub" || true
+{{-     end }}
+
 cask "brave-browser" || true
 cask "cheatsheet" || true
 cask "cyberduck" || true
 cask "dash" || true
 cask "docker" || true
 cask "dropbox" || true
-cask "evernote" || true
-cask "expressvpn" || true
 cask "firefox-developer-edition"|| true
 cask "fork"|| true
 cask "gimp" || true
@@ -65,31 +98,22 @@ cask "google-chrome" || true
 cask "iina" || true
 cask "imageoptim" || true
 cask "iterm2" || true
-cask "kaleidoscope" || true
+cask "kaleidoscope2" || true
 cask "keepingyouawake" || true
 cask "kitty" || true
 cask "krita" || true
 cask "macdown" || true
+cask "microsoft-remote-desktop" || true
 cask "ngrok" || true
-cask "numi" || true
-cask "plex-media-player" || true
 cask "postman" || true
 cask "qlvideo" || true
 cask "sequel-pro" || true
 cask "slack" || true
 cask "spotify" || true
-cask "sublime-text" || true
-cask "tower2" || true
-cask "transmission" || true
-cask "tunnelblick" || true
 cask "vagrant" || true
 cask "virtualbox" || true
 cask "visual-studio-code" || true
-
-cask "dotnet-sdk" || true
-cask "mono-mdk" || true
-cask "unity" || true
-cask "unity-hub" || true
+{{-   end }}
 
 ##### fonts #####
 # install IBM Plex, an excellent modern font (https://www.ibm.com/plex/)
@@ -98,3 +122,5 @@ cask "font-ibm-plex" || true
 cask "font-source-code-pro" || true
 # install Nerd fonts for terminal
 cask "font-hack-nerd-font" || true
+EOF
+{{ end }}

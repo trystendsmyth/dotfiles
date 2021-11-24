@@ -1,0 +1,36 @@
+#!/bin/bash
+{{ if (eq .chezmoi.os "darwin") }}
+# Ask for the administrator password upfront.
+sudo -v &> /dev/null
+
+# Update existing `sudo` time stamp
+# until this script has finished.
+while true; do
+    sudo -n true
+    sleep 60
+    kill -0 "$$" || exit
+done &> /dev/null &
+
+# Install Brew
+if ! command -v brew; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    brew analytics off
+else
+    brew update --verbose
+	brew upgrade --verbose
+	brew cleanup -s
+fi
+
+brew install bitwarden-cli
+
+{{ if eq .secrets "true" }}
+export BW_CLIENTID={{- .bwclientid -}}
+export BW_CLIENTSECRET={{- .bwclientsecret -}}
+
+# Authenticate Bitwarden Session
+bw login --apikey
+bw unlock
+
+export BW_SESSION={{- env "BW_SESSION" -}}
+{{ end }}
+{{ end }}

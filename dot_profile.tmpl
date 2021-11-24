@@ -22,9 +22,10 @@ export BLOCKSIZE=1k
 # gpg
 export GPG_TTY=$(tty)
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# NVM plugin settings
+export NVM_AUTO_USE=true
+export NVM_COMPLETION=true
+export NVM_LAZY_LOAD=true
 
 # Ignores all one-word commands for more efficient bash history searching
 export HISTIGNORE=?
@@ -35,14 +36,21 @@ export HISTSIZE=1000000
 # When the shell exits, append to the history file instead of overwriting it
 shopt -s histappend
 
+{{ if (eq .chezmoi.os "darwin") }}
 # directory specific .envrc files
-eval "$(direnv hook bash)"
+eval "$(direnv hook zsh)"
+{{ else if (eq .chezmoi.os "linux") }}
+[ -d /home/linuxbrew/.linuxbrew ] && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+{{ end }}
 
 # Bash completion for brew installed tools
 source "$(brew --prefix)/etc/bash_completion"
 
 # Bash completion for vv
 source $( echo $(which vv)-completions)
+
+# Use zsh nvm in Bash
+source ~/.zsh-nvm/zsh-nvm.plugin.zsh
 
 # Aliases are managed here
 source ~/.shell_aliases

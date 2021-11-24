@@ -1,4 +1,3 @@
-# Customization of https://github.com/tonylambiris/dotfiles
 export ZSH=~/.oh-my-zsh
 
 POWERLEVEL9K_MODE='awesome-fontconfig'

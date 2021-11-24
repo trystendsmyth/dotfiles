@@ -1,27 +1,39 @@
 # .dotfiles
 
-A collection of files for automated setup, configuration and software installation on a new MacOS install.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## installation
-On a new mac, open a Terminal and run:
+A collection of files for automated setup, configuration and software installation on a new MacOS, Linux or Windows machine.
+<br/><br/>
+## MacOS installation
+***
+Open Terminal and on a fresh install, run:
 
-    curl -O https://raw.githubusercontent.com/trystendsmyth/dotfiles/master/install.sh
-    chmod +x install.sh
-    ./install.sh
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/trystendsmyth/dotfiles/master/install.sh)"
 
-## maintenance
-Enter the `~/.dotfiles` directory, make any changes and `make` it:
+If you have `Xcode CLI tools` installed already, you can just use:
 
-    cd ~/.dotfiles
-    make
+    sh -c "$(curl -fsSL git.io/chezmoi)" -- init --apply trystendsmyth
+## Linux installation
+***
 
-The Makefile contains sections for specific commands.
+    sh -c "$(wget -qO- git.io/chezmoi)" -- init --apply trystendsmyth
 
-## credits
+To install and remove the installer use `--one-shot` instead of `--apply`
+<br/><br/>
+## Environment variables
+***
+There is currently only one environment variable and can be set to configure Chezmoi on runtime:
 
-This is mostly a shameless mashup of the following work :
+- `SECRETS`: Set to `true` to enable Bitwarden login for GPG and SSH secrets (not public)
 
-* https://github.com/Overbryd/dotfiles
-* https://github.com/mihaliak/dotfiles
-* https://github.com/mattorb/dotfiles
-* https://github.com/rootbeersoup/dotfiles/
+```shell
+SECRETS=true chezmoi init https://github.com/trystendsmyth/dotfiles.git
+```
+<br/><br/>
+## Windows installation
+***
+**Windows does not use Chezmoi and instead uses Boxstarter with Chocolatey.**
+
+Run the following from an **elevated** command-prompt:
+
+    start http://boxstarter.org/package/url?https://raw.githubusercontent.com/trystendsmyth/dotfiles/master/install.ps1
