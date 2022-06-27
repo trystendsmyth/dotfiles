@@ -6,11 +6,10 @@ brew bundle --no-lock --file=/dev/stdin <<EOF
 tap "homebrew/cask"
 # tap homebrew-fonts to install freely available fonts
 tap "homebrew/cask-fonts"
-{{-   if eq .workconfig "true" }}
-tap "AdoptOpenJDK/openjdk"
-{{-   else }}
 # tap homebrew-cask-versions to install older apps
 tap "homebrew/cask-versions"
+{{-   if eq .workconfig "true" }}
+tap "AdoptOpenJDK/openjdk"
 {{-   end }}
 
 ##### brews #####
@@ -29,6 +28,7 @@ brew "sonar-scanner" || true
 {{-   else }}
 brew "bradp/vv/vv" || true
 {{-   end }}
+brew "aria2" || true
 brew "curl" || true
 brew "diff-so-fancy" || true
 brew "direnv" || true

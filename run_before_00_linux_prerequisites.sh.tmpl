@@ -21,7 +21,6 @@ makepkg -si
 
 sudo systemctl enable --now snapd.socket
 sudo ln -s /var/lib/snapd/snap /snap
-sudo snap install bw
 
 {{-   else }}
 
@@ -30,11 +29,12 @@ sudo apt install snapd
 sudo service snapd start
 
 sudo snap install core
-sudo snap install bw
 
 {{-   end }}
 
 {{ if eq .secrets "true" }}
+sudo snap install bw
+
 export BW_CLIENTID={{- .bwclientid -}}
 export BW_CLIENTSECRET={{- .bwclientsecret -}}
 

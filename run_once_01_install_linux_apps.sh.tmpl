@@ -2,6 +2,7 @@
 {{ if (eq .chezmoi.os "linux") }}
 
 {{-   if (eq .chezmoi.osRelease.id "arch") }}
+sudo pacman -S aria2 --noconfirm
 sudo pacman -S base-devel --noconfirm
 sudo pacman -S coreutils --noconfirm
 sudo pacman -S git --noconfirm
@@ -9,7 +10,8 @@ sudo pacman -S gnupg --noconfirm
 sudo pacman -S kitty --noconfirm
 sudo pacman -S tmux --noconfirm
 {{-   else }}
-sudo apt install -y build-essential \
+sudo apt install -y aria2 \
+    build-essential \
     coreutils \
     curl \
     file \
