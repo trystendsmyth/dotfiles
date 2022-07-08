@@ -2,4 +2,7 @@
 {{ if (eq .chezmoi.os "linux") }}
 # Set zsh as default shell
 chsh -s /usr/bin/zsh
+
+# Install latest stable node and global packages
+nvm install stable && npm install -g fkill-cli gtop
 {{ end }}

@@ -1,0 +1,7 @@
+hosts:
+  ".*":                       # for all hosts
+    +s: zsh                    # use Zsh shell
+    +I:                         # install xxh packages (if not installed)
+      - xxh-shell-zsh                 # install portable Zsh
+      - xxh-plugin-zsh-ohmyzsh        # install Oh My Zsh plugin for xxh
+      - xxh-plugin-zsh-powerlevel10k  # install Oh p10k for xxh

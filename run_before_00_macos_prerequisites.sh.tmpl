@@ -11,6 +11,10 @@ while true; do
     kill -0 "$$" || exit
 done &> /dev/null &
 
+{{ if and (eq .chezmoi.os "darwin") (eq .chezmoi.arch "arm64") }}
+sudo softwareupdate --install-rosetta
+{{ end }}
+
 # Install Brew
 if ! command -v brew; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"

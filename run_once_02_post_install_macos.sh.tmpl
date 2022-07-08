@@ -8,22 +8,26 @@ grep -qxF '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' >> /etc/
 chsh -s /usr/local/bin/zsh
 
 # Install latest stable node and global packages
-nvm install stable && npm install -g eslint express jshint jsxhint nodemon react-tools
+nvm install stable && npm install -g eslint express fkill-cli gtop jshint jsxhint nodemon react-tools
 
 # Equivalent of VS [gui] Command Palette  "Shell command: Install 'code' command in PATH"
 ln -sf /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code
 
 # Helpful VScode extensions
 code --install-extension akamud.vscode-theme-onedark
+code --install-extension bungcip.better-toml
 code --install-extension dbaeumer.vscode-eslint
 code --install-extension eamodio.gitlens
-code --install-extension eg2.tslint
 code --install-extension esbenp.prettier-vscode
 code --install-extension kumar-harsh.graphql-for-vscode
 code --install-extension mohsen1.prettify-json
 code --install-extension mrmlnc.vscode-duplicate
 code --install-extension ms-vscode.sublime-keybindings
+code --install-extension ms-vsliveshare.vsliveshare
+code --install-extension pkief.material-icon-theme
 code --install-extension ryanluker.vscode-coverage-gutters
+code --install-extension streetsidesoftware.code-spell-checker
+code --install-extension vincaslt.highlight-matching-tag
 ## BE language support
 code --install-extension golang.go
 code --install-extension ms-python.python

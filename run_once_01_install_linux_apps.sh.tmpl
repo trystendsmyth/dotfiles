@@ -9,20 +9,28 @@ sudo pacman -S git --noconfirm
 sudo pacman -S gnupg --noconfirm
 sudo pacman -S kitty --noconfirm
 sudo pacman -S tmux --noconfirm
+sudo pacman -S topgrade --noconfirm
 {{-   else }}
 sudo apt install -y aria2 \
     build-essential \
+    cargo \
     coreutils \
     curl \
     file \
     git \
     gnupg \
+    {{ if (ne .chezmoi.arch "arm") }}
     kitty \
+    {{ else }}
+    guake \
+    {{ end }}
     procps \
     tmux \
     && apt clean
+sudo cargo install topgrade
 {{-   end }}
 
+{{ if (ne .chezmoi.arch "arm") }}
 # Install Brew
 if ! command -v brew; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -32,13 +40,23 @@ else
 	brew upgrade --verbose
 	brew cleanup -s
 fi
+{{ else }}
+# Guake Config
+guake --restore-preferences ~/.config/guake/guake.conf
+{{-   end }}
 
 ##### fonts #####
 wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Hack.zip
-wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/IBMPlexMono.zip
-wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/SourceCodePro.zip
 unzip Hack.zip -d ~/.local/share/fonts/
+rm Hack.zip
+
+wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/IBMPlexMono.zip
 unzip IBMPlexMono.zip -d ~/.local/share/fonts/
+rm IBMPlexMono.zip
+
+wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/SourceCodePro.zip
 unzip SourceCodePro.zip -d ~/.local/share/fonts/
+rm SourceCodePro.zip
+
 fc-cache -fv
 {{ end }}

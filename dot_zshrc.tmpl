@@ -41,6 +41,11 @@ export HISTSIZE=1000000
 setopt appendhistory
 setopt sharehistory
 setopt incappendhistory
+setopt hist_ignore_all_dups
+setopt hist_find_no_dups
+setopt hist_save_no_dups
+setopt hist_reduce_blanks
+setopt hist_beep
 
 # Let Chezmoi handle external updates
 DISABLE_AUTO_UPDATE="true"
