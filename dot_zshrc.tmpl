@@ -9,7 +9,7 @@ zmodload zsh/zprof
 export PATH="$PATH:$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin;"
 
 # set default editor
-export EDITOR='nano'
+export EDITOR='nvim'
 
 # utf-8 all the things
 export LC_ALL=en_US.UTF-8
@@ -47,6 +47,9 @@ setopt hist_save_no_dups
 setopt hist_reduce_blanks
 setopt hist_beep
 
+bindkey "^[[A" history-search-backward
+bindkey "^[[B" history-search-forward
+
 # Let Chezmoi handle external updates
 DISABLE_AUTO_UPDATE="true"
 
@@ -61,7 +64,7 @@ eval "$(direnv hook zsh)"
 FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
 
 # Set "Oh My Zsh" plugins
-plugins=(zsh-autosuggestions zsh-history-substring-search zsh-nvm zsh-syntax-highlighting z)
+plugins=(zsh-autosuggestions zsh-history-substring-search zsh-nvm zsh-syntax-highlighting tmuxinator z)
 
 # Zsh theme
 source ~/.zsh_theme

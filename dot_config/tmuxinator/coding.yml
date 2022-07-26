@@ -1,0 +1,19 @@
+name: coding
+root: ~/Projects/
+
+windows:
+- editor:
+    layout: main-horizontal
+    panes:
+      - nvim
+- git:
+    layout: main-horizontal
+    panes:
+      - lazygit
+- shell:
+    layout: main-vertical
+    panes:
+      - clear
+      - clear
+      - clear
+      - clear

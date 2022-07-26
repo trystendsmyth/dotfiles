@@ -24,42 +24,45 @@ brew "zsh"
 brew "zsh-completions"
 
 {{-   if eq .workconfig "true" }}
+brew "jesseduffield/lazygit/lazygit" || true
 brew "sonar-scanner" || true
 {{-   else }}
 brew "bradp/vv/vv" || true
 {{-   end }}
 brew "aria2" || true
 brew "curl" || true
-brew "diff-so-fancy" || true
 brew "direnv" || true
 brew "dockutil" || true
-brew "duti"
+brew "duti" || true
+brew "exa" || true
 brew "git" || true
+brew "git-delta" || true
 brew "gnupg" || true
 brew "htop" || true
 brew "httpie" || true
 brew "irssi" || true
 brew "m-cli" || true
 brew "mas" || true
+brew "neovim" || true
 brew "newsboat" || true
 brew "nmap" || true
 brew "openssl" || true
+brew "peco" || true
 brew "pinentry-mac" || true
 brew "pipenv" || true
+brew "pnpm" || true
 brew "python" || true
 brew "speedtest-cli" || true
 brew "stow" || true
 brew "tmux" || true
+brew "tmuxinator" || true
 brew "topgrade" || true
 brew "trash" || true
-brew "tree" || true
-brew "vim" || true
 brew "watch" || true
 brew "weechat" || true
 brew "wget" || true
 brew "wifi-password" || true
 brew "xxh" || true
-brew "yarn", args: ["ignore-dependencies"] || true
 
 ##### casks #####
 {{-   if eq .minimalinstall "false" }}
