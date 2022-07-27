@@ -2,8 +2,14 @@ README.md
 LICENSE
 install.ps1
 install.sh
-.gitignore
-
+Formula
+{{- if ne .chezmoi.os "darwin" }}
+.config/iterm
+.config/terminal
+{{- end }}
+{{- if ne .chezmoi.os "linux" }}
+.config/guake
+{{- end }}
 {{- if eq .secrets "false" }}
 .gnupg/pubring.kbx
 .gnupg/trustdb.gpg
@@ -11,4 +17,5 @@ install.sh
 .gnupg/private-keys-v1.d/DE8259F541274FFAA21B84AAD2B0093D9B4169B2.key
 .ssh/id_rsa.pub
 .ssh/id_rsa
+.work_profile
 {{- end }}

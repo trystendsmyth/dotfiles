@@ -1,8 +1,8 @@
 [user]
-    name = {{- .fullname -}}
-    email = {{- .email -}}
+    name = {{ .fullname }}
+    email = {{ .email }}
 {{- if eq .secrets "true" -}}
-    signingkey = {{- (bitwarden "item" "gpg").notes -}}
+    signingkey = {{ (bitwarden "item" "gpg").notes }}
 {{- end -}}
 
 [core]
@@ -18,12 +18,12 @@
     navigate = true
 
 [github]
-    user = {{- .gituser -}}
+    user = {{ .gituser }}
+{{- if eq .chezmoi.os "darwin" -}}
 
-{{ if eq .chezmoi.os "darwin" }}
 [credential]
     helper = osxkeychain
-{{ end }}
+{{- end -}}
 
 [color]
     ui = auto
@@ -43,8 +43,8 @@
     added = green
     changed = yellow
     untracked = cyan
+{{- if eq .chezmoi.os "darwin" -}}
 
-{{ if eq .chezmoi.os "darwin" }}
 [diff]
     colorMoved = default
     tool = Kaleidoscope
@@ -59,7 +59,7 @@
 [mergetool "Kaleidoscope"]
     cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
     trustexitcode = true
-{{ end }}
+{{- end -}}
 
 [difftool]
     prompt = false
@@ -95,4 +95,8 @@
     uc = reset HEAD~1
     uncommit = reset --soft HEAD~1
     unignore = update-index --no-assume-unchanged
+{{- if eq .workconfig "true" -}}
 
+[url "ssh://git@github.com/"]
+    insteadOf = https://github.com/
+{{- end -}}

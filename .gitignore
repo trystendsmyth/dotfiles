@@ -14,5 +14,8 @@ Thumbs.db
 .ssh/id*
 .ssh/known_hosts
 
+# Don't commit gpg secrets
+secring.*
+
 # Don't commit node modules
 node_modules
