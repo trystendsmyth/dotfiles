@@ -25,6 +25,7 @@ code --install-extension ms-vscode.sublime-keybindings
 code --install-extension ms-vsliveshare.vsliveshare
 code --install-extension naumovs.color-highlight
 code --install-extension pkief.material-icon-theme
+code --install-extension rust-lang.rust-analyzer
 code --install-extension ryanluker.vscode-coverage-gutters
 code --install-extension streetsidesoftware.code-spell-checker
 code --install-extension trystendsmyth.vscode-theme-oxforddark
@@ -44,7 +45,7 @@ code --install-extension yclepticStudios.unity-snippets
 {{ end }}
 
 # Default IINA (media files)
-@while read -r ext; do \
-    duti -s com.colliderli.iina "$ext" all; \
+@while read -r ext; do
+    duti -s com.colliderli.iina "$ext" all;
 done <"~/.config/.duti/iina.txt"
 {{ end }}

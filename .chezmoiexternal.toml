@@ -34,3 +34,7 @@
     exact = true
     stripComponents = 1
     refreshPeriod = "168h"
+[".tmux/powerline"]
+    type = "git-repo"
+    url = "https://github.com/erikw/tmux-powerline.git"
+    refreshPeriod = "168h"
