@@ -21,7 +21,7 @@ defaults write com.apple.finder EmptyTrashSecurely -bool false
 defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 # Show the ~/Library folder
-chflags nohidden $(HOME)/Library
+chflags nohidden ~/Library
 
 ## NSGlobalDomain defaults
 # Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)
@@ -84,13 +84,14 @@ dockutil --no-restart --add "/Applications/Notes.app"
 dockutil --no-restart --add "/Applications/Messages.app"
 dockutil --no-restart --add "/Applications/Facetime.app"
 dockutil --no-restart --add "/Applications/VirtualBox.app"
+dockutil --no-restart --add "/Applications/GitHub Desktop.app"
 dockutil --no-restart --add "/Applications/Visual Studio Code.app"
 dockutil --no-restart --add "/Applications/Kitty.app"
 dockutil --no-restart --add "/Applications/ExpressVPN.app"
 dockutil --no-restart --add "/Applications/System Preferences.app"
 
 dockutil --no-restart --add "/Applications" --section others --sort name --view grid
-dockutil --no-restart --add "$(HOME)/Downloads" --section others --view list
+dockutil --no-restart --add "{{ joinPath .chezmoi.homeDir "Downloads" }}" --section others --view list
 
 # Show remaining battery time as percentage
 defaults write com.apple.menuextra.battery ShowPercent -string "YES"
@@ -110,7 +111,7 @@ defaults write com.apple.BezelServices kDim -bool true
 defaults write com.apple.BezelServices kDimTime -int 300
 
 # Save screenshots to the desktop
-defaults write com.apple.screencapture location -string "$(HOME)/Desktop"
+defaults write com.apple.screencapture location -string "~/Desktop"
 # Disable shadow in screenshots
 defaults write com.apple.screencapture disable-shadow -bool true
 # Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
@@ -137,7 +138,7 @@ defaults write com.google.Chrome.canary AppleEnableSwipeNavigateWithScrolls -boo
 defaults write com.google.Chrome AppleEnableMouseSwipeNavigateWithScrolls -bool false
 defaults write com.google.Chrome.canary AppleEnableMouseSwipeNavigateWithScrolls -bool false
 
-# disable apple captive portal (seucrity issue)
+# disable apple captive portal (security issue)
 # sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.captive.control Active -bool false
 
 # setup OpenDNS

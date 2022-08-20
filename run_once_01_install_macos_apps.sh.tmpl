@@ -9,7 +9,7 @@ tap "homebrew/cask-fonts"
 # tap homebrew-cask-versions to install older apps
 tap "homebrew/cask-versions"
 # tap custom formula
-# tap "trystendsmyth/dotfiles", "https://github.com/trystendsmyth/dotfiles.git"
+tap "trystendsmyth/dotfiles", "https://github.com/trystendsmyth/dotfiles.git"
 {{-   if eq .workconfig "true" }}
 tap "AdoptOpenJDK/openjdk"
 {{-   end }}
@@ -81,6 +81,7 @@ cask "alfred" || true
 cask "evernote" || true
 cask "expressvpn" || true
 cask "numi" || true
+cask "moom" || true
 cask "plex-media-player" || true
 cask "sublime-text" || true
 cask "tower2" || true

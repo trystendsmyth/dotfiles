@@ -45,7 +45,7 @@ code --install-extension yclepticStudios.unity-snippets
 {{ end }}
 
 # Default IINA (media files)
-@while read -r ext; do
+while read -r ext; do
     duti -s com.colliderli.iina "$ext" all;
-done <"~/.config/.duti/iina.txt"
+done <".config/.duti/iina.txt"
 {{ end }}
