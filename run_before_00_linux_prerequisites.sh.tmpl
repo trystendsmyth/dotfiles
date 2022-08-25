@@ -14,6 +14,7 @@ done &> /dev/null &
 {{-   if (eq .chezmoi.osRelease.id "arch") -}}
 
 sudo pacman -Syu
+sudo pacman -S git --noconfirm
 
 git clone https://aur.archlinux.org/snapd.git
 cd snapd
@@ -25,7 +26,8 @@ sudo ln -s /var/lib/snapd/snap /snap
 {{-   else }}
 
 sudo apt update && sudo apt full-upgrade -y
-sudo apt install snapd
+sudo apt install -y git
+sudo apt install -y snapd
 sudo service snapd start
 
 sudo snap install core

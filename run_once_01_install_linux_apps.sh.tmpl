@@ -6,11 +6,11 @@ sudo pacman -S aria2 --noconfirm
 sudo pacman -S base-devel --noconfirm
 sudo pacman -S coreutils --noconfirm
 sudo pacman -S exa --noconfirm
-sudo pacman -S git --noconfirm
 sudo pacman -S gnupg --noconfirm
 sudo pacman -S kitty --noconfirm
 sudo pacman -S tmux --noconfirm
 sudo pacman -S topgrade --noconfirm
+sudo pacman -S zsh --noconfirm
 {{-   else }}
 sudo apt install -y aria2 \
     build-essential \
@@ -19,7 +19,6 @@ sudo apt install -y aria2 \
     curl \
     exa \
     file \
-    git \
     gnupg \
     {{ if (ne .chezmoi.arch "arm") }}
     kitty \
@@ -28,6 +27,7 @@ sudo apt install -y aria2 \
     {{ end }}
     procps \
     tmux \
+    zsh \
     && apt clean
 sudo cargo install topgrade
 {{-   end }}
