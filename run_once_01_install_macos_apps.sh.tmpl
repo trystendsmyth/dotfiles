@@ -25,13 +25,6 @@ brew "bash-completion"
 brew "zsh"
 brew "zsh-completions"
 
-{{-   if eq .workconfig "true" }}
-brew "jesseduffield/lazygit/lazygit" || true
-brew "sonar-scanner" || true
-{{-   else }}
-brew "bradp/vv/vv" || true
-{{-   end }}
-brew "aria2" || true
 brew "curl" || true
 brew "dashlane-cli" || true
 brew "direnv" || true
@@ -41,35 +34,55 @@ brew "exa" || true
 brew "git" || true
 brew "git-delta" || true
 brew "gnupg" || true
+brew "m-cli" || true
+brew "mas" || true
+brew "pinentry-mac" || true
+brew "speedtest-cli" || true
+brew "trash" || true
+brew "wget" || true
+brew "wifi-password" || true
+{{-   if eq .minimalinstall "false" }}
+{{-     if eq .workconfig "true" }}
+brew "jesseduffield/lazygit/lazygit" || true
+brew "sonar-scanner" || true
+{{-     else }}
+brew "bradp/vv/vv" || true
+{{-     end }}
+brew "aria2" || true
 brew "go" || true
 brew "htop" || true
 brew "httpie" || true
 brew "irssi" || true
-brew "m-cli" || true
-brew "mas" || true
 brew "neovim" || true
 brew "newsboat" || true
 brew "nmap" || true
 brew "openssl" || true
 brew "peco" || true
-brew "pinentry-mac" || true
 brew "pipenv" || true
 brew "pnpm" || true
 brew "python" || true
 brew "rust-analyzer" || true
-brew "speedtest-cli" || true
 brew "stow" || true
 brew "tmux" || true
 brew "tmuxinator" || true
 brew "topgrade" || true
-brew "trash" || true
 brew "watch" || true
 brew "weechat" || true
-brew "wget" || true
-brew "wifi-password" || true
 brew "xxh" || true
+{{-   end }}
 
 ##### casks #####
+cask "alfred" || true
+cask "brave-browser" || true
+cask "dropbox" || true
+cask "evernote" || true
+cask "expressvpn" || true
+cask "google-chrome" || true
+cask "iina" || true
+cask "kitty" || true
+cask "moom" || true
+cask "qlvideo" || true
+cask "spotify" || true
 {{-   if eq .minimalinstall "false" }}
 {{-     if eq .workconfig "true" }}
 cask "adoptopenjdk11" || true
@@ -77,11 +90,7 @@ cask "cloudapp" || true
 cask "robo-3t" || true
 {{-     else }}
 cask "adium" || true
-cask "alfred" || true
-cask "evernote" || true
-cask "expressvpn" || true
 cask "numi" || true
-cask "moom" || true
 cask "plex-media-player" || true
 cask "sublime-text" || true
 cask "tower2" || true
@@ -94,32 +103,25 @@ cask "unity" || true
 cask "unity-hub" || true
 {{-     end }}
 
-cask "brave-browser" || true
 cask "cheatsheet" || true
 cask "cyberduck" || true
 cask "dash" || true
 cask "docker" || true
-cask "dropbox" || true
 cask "firefox-developer-edition"|| true
 cask "fork"|| true
 cask "gimp" || true
 cask "github" || true
-cask "google-chrome" || true
-cask "iina" || true
 cask "imageoptim" || true
 cask "iterm2" || true
 cask "kaleidoscope2" || true
 cask "keepingyouawake" || true
-cask "kitty" || true
 cask "krita" || true
 cask "macdown" || true
 cask "microsoft-remote-desktop" || true
 cask "ngrok" || true
 cask "postman" || true
-cask "qlvideo" || true
 cask "sequel-pro" || true
 cask "slack" || true
-cask "spotify" || true
 cask "vagrant" || true
 cask "virtualbox" || true
 cask "visual-studio-code" || true

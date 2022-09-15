@@ -3,14 +3,20 @@ LICENSE
 install.ps1
 install.sh
 Formula
-{{- if ne .chezmoi.os "darwin" }}
+{{- if eq .minimalinstall "true" }}
+.aria2
+.config/tmuxinator
+.config/xxh
+.tmux.conf
+.tmux-powerlinerc
+{{-   if ne .chezmoi.os "darwin" }}
 .config/iterm
 .config/terminal
-{{- end }}
-{{- if ne .chezmoi.os "linux" }}
+{{-   end }}
+{{-   if ne .chezmoi.os "linux" }}
 .config/guake
-{{- end }}
-{{- if eq .secrets "false" }}
+{{-   end }}
+{{-   if eq .secrets "false" }}
 .gnupg/pubring.kbx
 .gnupg/trustdb.gpg
 .gnupg/private-keys-v1.d/2C8C688D573F0CC6673F7F16D3C85485F8D03A8C.key
@@ -18,4 +24,5 @@ Formula
 .ssh/id_rsa.pub
 .ssh/id_rsa
 .work_profile
+{{-   end }}
 {{- end }}
