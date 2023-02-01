@@ -10,9 +10,6 @@ tap "homebrew/cask-fonts"
 tap "homebrew/cask-versions"
 # tap custom formula
 tap "trystendsmyth/dotfiles", "https://github.com/trystendsmyth/dotfiles.git"
-{{-   if eq .workconfig "true" }}
-tap "AdoptOpenJDK/openjdk"
-{{-   end }}
 
 ##### brews #####
 # GNU coreutils instead of outdated mac os defaults
@@ -43,8 +40,7 @@ brew "wget" || true
 brew "wifi-password" || true
 {{-   if eq .minimalinstall "false" }}
 {{-     if eq .workconfig "true" }}
-brew "jesseduffield/lazygit/lazygit" || true
-brew "sonar-scanner" || true
+brew "lazygit" || true
 {{-     else }}
 brew "bradp/vv/vv" || true
 {{-     end }}
@@ -73,6 +69,7 @@ brew "xxh" || true
 
 ##### casks #####
 cask "alfred" || true
+cask "appcleaner" || true
 cask "brave-browser" || true
 cask "dropbox" || true
 cask "evernote" || true
@@ -85,9 +82,9 @@ cask "qlvideo" || true
 cask "spotify" || true
 {{-   if eq .minimalinstall "false" }}
 {{-     if eq .workconfig "true" }}
-cask "adoptopenjdk11" || true
 cask "cloudapp" || true
 cask "robo-3t" || true
+cask "zoom" || true
 {{-     else }}
 cask "adium" || true
 cask "numi" || true

@@ -56,8 +56,8 @@ defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 defaults write com.apple.dock autohide -bool true
 # Make Dock icons of hidden applications translucent
 defaults write com.apple.dock showhidden -bool true
-# Set the icon size of Dock items to 36 pixels
-defaults write com.apple.dock tilesize -int 36
+# Set the icon size of Dock items to 48 pixels
+defaults write com.apple.dock tilesize -int 48
 # Enable highlight hover effect for the grid view of a stack (Dock)
 defaults write com.apple.dock mouse-over-hilte-stack -bool true
 # Enable spring loading for all Dock items
@@ -78,7 +78,6 @@ dockutil --no-restart --remove all
 dockutil --no-restart --add "/Applications/Safari.app"
 dockutil --no-restart --add "/Applications/Google Chrome.app"
 dockutil --no-restart --add "/Applications/Brave Browser.app"
-dockutil --no-restart --add "/Applications/Firefox Developer Edition.app.app"
 dockutil --no-restart --add "/Applications/Evernote.app"
 dockutil --no-restart --add "/Applications/Notes.app"
 dockutil --no-restart --add "/Applications/Messages.app"

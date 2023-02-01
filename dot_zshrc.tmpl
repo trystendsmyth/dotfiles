@@ -6,7 +6,8 @@ zmodload zsh/zprof
 # fi
 
 # set paths
-export PATH="$PATH:$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin;"
+export BREW_PATH="/opt/homebrew/sbin:/opt/homebrew/bin:/usr/local/sbin:/usr/local/bin"
+export PATH="$BREW_PATH:$PATH:$HOME/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 # set default editor
 export EDITOR='nvim'

@@ -20,16 +20,6 @@ If you have `Xcode CLI tools` installed already, you can just use:
 
 To install and remove the installer use `--one-shot` instead of `--apply`
 <br/><br/>
-## Environment variables
-***
-There is currently only one environment variable and can be set to configure Chezmoi on runtime:
-
-- `SECRETS`: Set to `true` to enable Bitwarden login for GPG and SSH secrets (not public)
-
-```shell
-SECRETS=true chezmoi init https://github.com/trystendsmyth/dotfiles.git
-```
-<br/><br/>
 ## Windows installation
 ***
 **Windows does not use Chezmoi and instead uses Boxstarter with Chocolatey.**
