@@ -1,0 +1,7 @@
+#!/bin/sh
+
+for file in `find . -name '*.aes'`; do
+  target=${file%%.aes}
+  echo "Decrypting '$file' to '$target'..."
+  openssl enc -d -aes-256-cbc -salt -in "$file" -out "$target"
+done

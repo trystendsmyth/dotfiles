@@ -1,3 +1,29 @@
+# Exports
+export PROJECTS="$HOME/Projects"
+
+# Commands
+###
+
+# Functions
+new() {
+  git checkout -b ts/$1;
+}
+
+qabr() {
+  branch=$(git rev-parse --abbrev-ref HEAD)
+  git push origin $branch:qa$1 --force
+}
+
+rchar() {
+  cdchar
+  grunt docker:qa/$1:chrome:staging
+}
+
+# example usage: cc fix COM-123 "removed devastating bug"
+cc() {
+ git commit -am "$1: [$2] $3"
+}
+
 {{- if eq .workconfig "true" -}}
 {{-   if eq .secrets "true" -}}
 {{- (bitwarden "item" "work_profile").notes -}}
