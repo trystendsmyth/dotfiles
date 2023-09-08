@@ -2,14 +2,12 @@
 {{ if (eq .chezmoi.os "darwin") }}
 cat > $HOME/.Brewfile <<EOF
 ##### taps #####
-# tap homebrew-cask to install osx applications
-tap "homebrew/cask"
 # tap homebrew-fonts to install freely available fonts
 tap "homebrew/cask-fonts"
 # tap homebrew-cask-versions to install older apps
 tap "homebrew/cask-versions"
-# tap custom formula
-tap "trystendsmyth/dotfiles", "https://github.com/trystendsmyth/dotfiles.git"
+# tap dashlane
+tap "dashlane/tap"
 
 ##### brews #####
 # GNU coreutils instead of outdated mac os defaults
@@ -27,7 +25,7 @@ brew "dashlane-cli" || true
 brew "direnv" || true
 brew "dockutil" || true
 brew "duti" || true
-brew "exa" || true
+brew "eza" || true
 brew "git" || true
 brew "git-delta" || true
 brew "gnupg" || true
@@ -82,8 +80,8 @@ cask "qlvideo" || true
 cask "spotify" || true
 {{-   if eq .minimalinstall "false" }}
 {{-     if eq .workconfig "true" }}
-cask "cloudapp" || true
 cask "robo-3t" || true
+cask "zight" || true
 cask "zoom" || true
 {{-     else }}
 cask "adium" || true
@@ -120,7 +118,11 @@ cask "postman" || true
 cask "sequel-pro" || true
 cask "slack" || true
 cask "vagrant" || true
+{{-     if eq .chezmoi.arch "arm64" }}
+cask "virtualbox-beta" || true
+{{-     else }}
 cask "virtualbox" || true
+{{-     end }}
 cask "visual-studio-code" || true
 {{-   end }}
 

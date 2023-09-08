@@ -10,11 +10,11 @@ alias ...='cd ../../'                          # Go back 2 directory levels
 alias ~="cd ~"                                 # ~: Go Home
 alias c='clear'                                # c: Clear terminal display
 alias f='open -a Finder ./'                    # f: Opens current directory in MacOS Finder
-alias ll='exa -Slhg --icons'                   # Full colorized listing information
-alias lla='exa -Slhga --icons'                 # Full and complete colorized listing information
-alias lr='exa -DT | less'                      # Full Recursive Directory Listing
-alias t="exa -lTL 1 --group-directories-first" # nice directory tree listing (long, human readable)
-alias tt="exa -TL 2 --group-directories-first" # nice directory tree listing, but just 2 levels
+alias ll='eza -Slhg --icons'                   # Full colorized listing information
+alias lla='eza -Slhga --icons'                 # Full and complete colorized listing information
+alias lr='eza -DT | less'                      # Full Recursive Directory Listing
+alias t="eza -lTL 1 --group-directories-first" # nice directory tree listing (long, human readable)
+alias tt="eza -TL 2 --group-directories-first" # nice directory tree listing, but just 2 levels
 alias ttop="top -R -F -s 10 -o rsize"          # ttop:  Recommended 'top' invocation to minimize resources
 
 # if we are in a tmate session, alias tmux as tmate

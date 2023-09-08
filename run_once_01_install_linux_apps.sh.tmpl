@@ -5,19 +5,23 @@
 sudo pacman -S aria2 --noconfirm
 sudo pacman -S base-devel --noconfirm
 sudo pacman -S coreutils --noconfirm
-sudo pacman -S exa --noconfirm
+sudo pacman -S eza --noconfirm
 sudo pacman -S gnupg --noconfirm
 sudo pacman -S kitty --noconfirm
 sudo pacman -S tmux --noconfirm
 sudo pacman -S topgrade --noconfirm
 sudo pacman -S zsh --noconfirm
 {{-   else }}
+# Add library for "eza"
+wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo tee /etc/apt/trusted.gpg.d/gierens.asc
+echo "deb http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list
+sudo apt update
 sudo apt install -y aria2 \
     build-essential \
     cargo \
     coreutils \
     curl \
-    exa \
+    eza \
     file \
     gnupg \
     {{ if (ne .chezmoi.arch "arm") }}
