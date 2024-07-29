@@ -2,10 +2,6 @@
 {{ if (eq .chezmoi.os "darwin") }}
 cat > $HOME/.Brewfile <<EOF
 ##### taps #####
-# tap homebrew-fonts to install freely available fonts
-tap "homebrew/cask-fonts"
-# tap homebrew-cask-versions to install older apps
-tap "homebrew/cask-versions"
 # tap dashlane
 tap "dashlane/tap"
 
@@ -70,12 +66,12 @@ cask "alfred" || true
 cask "appcleaner" || true
 cask "brave-browser" || true
 cask "dropbox" || true
-cask "evernote" || true
 cask "expressvpn" || true
 cask "google-chrome" || true
 cask "iina" || true
 cask "kitty" || true
 cask "moom" || true
+cask "notion" || true
 cask "qlvideo" || true
 cask "spotify" || true
 {{-   if eq .minimalinstall "false" }}
