@@ -1,10 +1,6 @@
 #!/bin/bash
 {{ if (eq .chezmoi.os "darwin") }}
 cat > $HOME/.Brewfile <<EOF
-##### taps #####
-# tap dashlane
-tap "dashlane/tap"
-
 ##### brews #####
 # GNU coreutils instead of outdated mac os defaults
 brew "coreutils"
@@ -17,7 +13,7 @@ brew "zsh"
 brew "zsh-completions"
 
 brew "curl" || true
-brew "dashlane-cli" || true
+brew "dashlane/tap/dashlane-cli" || true
 brew "direnv" || true
 brew "dockutil" || true
 brew "duti" || true
@@ -77,7 +73,7 @@ cask "spotify" || true
 {{-   if eq .minimalinstall "false" }}
 {{-     if eq .workconfig "true" }}
 cask "studio-3t" || true
-cask "zight" || true
+cask "loom" || true
 cask "zoom" || true
 {{-     else }}
 cask "adium" || true
@@ -99,7 +95,6 @@ cask "cyberduck" || true
 cask "dash" || true
 cask "docker" || true
 cask "firefox-developer-edition"|| true
-cask "fork"|| true
 cask "gimp" || true
 cask "github" || true
 cask "imageoptim" || true
@@ -114,9 +109,7 @@ cask "postman" || true
 cask "sequel-ace" || true
 cask "slack" || true
 cask "vagrant" || true
-{{-     if eq .chezmoi.arch "arm64" }}
-cask "virtualbox-beta" || true
-{{-     else }}
+{{-     if (ne .chezmoi.arch "arm64") }}
 cask "virtualbox" || true
 {{-     end }}
 cask "visual-studio-code" || true

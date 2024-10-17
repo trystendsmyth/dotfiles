@@ -78,11 +78,13 @@ dockutil --no-restart --remove all
 dockutil --no-restart --add "/Applications/Safari.app"
 dockutil --no-restart --add "/Applications/Google Chrome.app"
 dockutil --no-restart --add "/Applications/Brave Browser.app"
-dockutil --no-restart --add "/Applications/Evernote.app"
+dockutil --no-restart --add "/Applications/Notion.app"
 dockutil --no-restart --add "/Applications/Notes.app"
 dockutil --no-restart --add "/Applications/Messages.app"
 dockutil --no-restart --add "/Applications/Facetime.app"
+{{- if ne .chezmoi.arch "arm64" }}
 dockutil --no-restart --add "/Applications/VirtualBox.app"
+{{- end }}
 dockutil --no-restart --add "/Applications/GitHub Desktop.app"
 dockutil --no-restart --add "/Applications/Visual Studio Code.app"
 dockutil --no-restart --add "/Applications/Kitty.app"
