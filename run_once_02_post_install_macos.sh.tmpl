@@ -2,11 +2,11 @@
 {{ if (eq .chezmoi.os "darwin") }}
 # Add brew bash path to shells
 {{-   if (eq .chezmoi.arch "arm64") }}
-sudo grep -qxF '/opt/homebrew/bin/bash' /etc/shells || echo '/opt/homebrew/bin//bash' >> /etc/shells
+sudo grep -qxF '/opt/homebrew/bin/bash' /etc/shells || echo '/opt/homebrew/bin/bash' >> /etc/shells
 
 # Add zsh bash path to shells and set as default
-sudo grep -qxF '/opt/homebrew/bin//zsh' /etc/shells || echo '/opt/homebrew/bin//zsh' >> /etc/shells
-sudo chsh -s /opt/homebrew/bin//zsh
+sudo grep -qxF '/opt/homebrew/bin/zsh' /etc/shells || echo '/opt/homebrew/bin/zsh' >> /etc/shells
+sudo chsh -s /opt/homebrew/bin/zsh
 {{-   else }}
 grep -qxF '/usr/local/bin/bash' /etc/shells || echo '/usr/local/bin/bash' >> /etc/shells
 

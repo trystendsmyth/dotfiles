@@ -1,6 +1,10 @@
 #!/bin/bash
 {{ if (eq .chezmoi.os "darwin") }}
 cat > $HOME/.Brewfile <<EOF
+##### taps #####
+# tap dashlane
+tap "dashlane/tap"
+
 ##### brews #####
 # GNU coreutils instead of outdated mac os defaults
 brew "coreutils"
@@ -13,7 +17,7 @@ brew "zsh"
 brew "zsh-completions"
 
 brew "curl" || true
-brew "dashlane/tap/dashlane-cli" || true
+brew "dashlane-cli" || true
 brew "direnv" || true
 brew "dockutil" || true
 brew "duti" || true
@@ -46,7 +50,7 @@ brew "openssl" || true
 brew "peco" || true
 brew "pipenv" || true
 brew "pnpm" || true
-brew "python" || true
+brew "pyenv" || true
 brew "rust-analyzer" || true
 brew "stow" || true
 brew "tmux" || true
@@ -94,12 +98,12 @@ cask "cheatsheet" || true
 cask "cyberduck" || true
 cask "dash" || true
 cask "docker" || true
-cask "firefox-developer-edition"|| true
+cask "firefox@developer-edition"|| true
 cask "gimp" || true
 cask "github" || true
 cask "imageoptim" || true
 cask "iterm2" || true
-cask "kaleidoscope2" || true
+cask "kaleidoscope@2" || true
 cask "keepingyouawake" || true
 cask "krita" || true
 cask "macdown" || true
