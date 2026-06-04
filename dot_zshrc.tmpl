@@ -28,9 +28,29 @@ export BLOCKSIZE=1k
 export GPG_TTY=$(tty)
 
 # NVM plugin settings
-export NVM_AUTO_USE=true
+export NVM_AUTO_USE=true        # required by the lazy auto-load below
 export NVM_COMPLETION=true
 export NVM_LAZY_LOAD=true
+
+# Lazy-load nvm + apply .nvmrc on first entry into a project dir.
+# (NVM_LAZY_LOAD defers nvm.sh, which otherwise breaks zsh-nvm's auto-use.)
+export NVM_LAZY_AUTO_DIR=("$HOME/Projects")
+_nvm_lazy_autoload() {
+  [[ "$(type node 2>/dev/null)" == *'shell function'* ]] || return  # already loaded
+  local d
+  for d in $NVM_LAZY_AUTO_DIR; do
+    if [[ "$PWD/" == "$d"/* ]]; then
+      print 'Activating nvm...'
+      node --version >/dev/null 2>&1   # trigger lazy load
+      cd "$PWD"                         # re-fire chpwd -> apply .nvmrc
+      return
+    fi
+  done
+}
+if [[ "$NVM_LAZY_LOAD" == true ]]; then
+  autoload -U add-zsh-hook
+  add-zsh-hook precmd _nvm_lazy_autoload
+fi
 
 # Ignores all one-word commands for more efficient bash history searching
 export HISTIGNORE=?
