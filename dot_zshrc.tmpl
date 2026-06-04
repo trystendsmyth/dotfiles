@@ -37,6 +37,9 @@ export HISTIGNORE=?
 # Long history without duplicates, flush after every command
 export HISTCONTROL=ignoreboth:erasedups
 export HISTSIZE=1000000
+# zsh requires SAVEHIST (and a HISTFILE) to actually persist history to disk
+export SAVEHIST=1000000
+export HISTFILE=~/.zsh_history
 
 # When the shell exits, append to the history file instead of overwriting it
 setopt appendhistory

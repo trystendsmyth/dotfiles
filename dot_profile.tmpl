@@ -39,7 +39,7 @@ shopt -s histappend
 
 {{ if (eq .chezmoi.os "darwin") }}
 # directory specific .envrc files
-eval "$(direnv hook zsh)"
+eval "$(direnv hook bash)"
 {{ else if (eq .chezmoi.os "linux") }}
 [ -d /home/linuxbrew/.linuxbrew ] && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 {{ end }}

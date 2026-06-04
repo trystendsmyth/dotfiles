@@ -4,6 +4,7 @@ cat > $HOME/.Brewfile <<EOF
 ##### taps #####
 # tap dashlane
 tap "dashlane/tap"
+tap "showwin/speedtest"
 
 ##### brews #####
 # GNU coreutils instead of outdated mac os defaults
@@ -16,6 +17,7 @@ brew "bash-completion"
 brew "zsh"
 brew "zsh-completions"
 
+brew "bitwarden-cli" || true
 brew "curl" || true
 brew "dashlane-cli" || true
 brew "direnv" || true
@@ -28,13 +30,16 @@ brew "gnupg" || true
 brew "m-cli" || true
 brew "mas" || true
 brew "pinentry-mac" || true
-brew "speedtest-cli" || true
+brew "speedtest" || true
 brew "trash" || true
 brew "wget" || true
 brew "wifi-password" || true
 {{-   if eq .minimalinstall "false" }}
 {{-     if eq .workconfig "true" }}
+brew "gh" || true
+brew "glab" || true
 brew "lazygit" || true
+brew "vercel-cli" || true
 {{-     else }}
 brew "bradp/vv/vv" || true
 {{-     end }}
@@ -51,6 +56,8 @@ brew "peco" || true
 brew "pipenv" || true
 brew "pnpm" || true
 brew "pyenv" || true
+brew "uv" || true
+brew "ripgrep" || true
 brew "rust-analyzer" || true
 brew "stow" || true
 brew "tmux" || true
@@ -72,7 +79,7 @@ cask "iina" || true
 cask "kitty" || true
 cask "moom" || true
 cask "notion" || true
-cask "qlvideo" || true
+cask "quicklook-video" || true
 cask "spotify" || true
 {{-   if eq .minimalinstall "false" }}
 {{-     if eq .workconfig "true" }}
@@ -94,7 +101,9 @@ cask "unity" || true
 cask "unity-hub" || true
 {{-     end }}
 
+cask "bambu-studio" || true
 cask "cheatsheet" || true
+cask "cursor" || true
 cask "cyberduck" || true
 cask "dash" || true
 cask "docker" || true
@@ -102,7 +111,7 @@ cask "firefox@developer-edition"|| true
 cask "gimp" || true
 cask "github" || true
 cask "imageoptim" || true
-cask "iterm2" || true
+cask "inkscape" || true
 cask "kaleidoscope@2" || true
 cask "keepingyouawake" || true
 cask "krita" || true
@@ -110,6 +119,7 @@ cask "macdown" || true
 cask "microsoft-remote-desktop" || true
 cask "ngrok" || true
 cask "postman" || true
+cask "processing" || true
 cask "sequel-ace" || true
 cask "slack" || true
 cask "vagrant" || true

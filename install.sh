@@ -13,4 +13,4 @@ else
 fi
 
 echo "Launching Chezmoi install..."
-sh -c "$(curl -fsLS git.io/chezmoi)" -- init --apply trystendsmyth
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply trystendsmyth

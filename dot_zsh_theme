@@ -1,11 +1,17 @@
 export ZSH=~/.oh-my-zsh
 
-POWERLEVEL9K_MODE='awesome-fontconfig'
+POWERLEVEL9K_MODE='nerdfont-complete'
+
+# Set Oh My Zsh theme conditionally
+if [[ "$TERM_PROGRAM" == "vscode" ]]; then
+  typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
+  typeset -g POWERLEVEL9K_TRANSIENT_PROMPT=off
+fi
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 source $ZSH/oh-my-zsh.sh
 
-plugins=(git)
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
 # Set consistent colors
 COLOR_RED=009
@@ -22,7 +28,6 @@ DEFAULT_COLOR=$DEFAULT_FOREGROUND
 DEFAULT_DARKER="black"
 DEFAULT_LIGHTER="$(( $DEFAULT_BACKGROUND + 2 ))"
 
-POWERLEVEL9K_MODE="nerdfont-complete"
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=5
 
 POWERLEVEL9K_DIR_OMIT_FIRST_CHARACTER=false

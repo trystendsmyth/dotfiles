@@ -12,11 +12,11 @@ Open Terminal and on a fresh install, run:
 
 If you have `Xcode CLI tools` installed already, you can just use:
 
-    sh -c "$(curl -fsSL git.io/chezmoi)" -- init --apply trystendsmyth
+    sh -c "$(curl -fsSL get.chezmoi.io)" -- init --apply trystendsmyth
 ## Linux installation
 ***
 
-    sh -c "$(wget -qO- git.io/chezmoi)" -- init --apply trystendsmyth
+    sh -c "$(wget -qO- get.chezmoi.io)" -- init --apply trystendsmyth
 
 To install and remove the installer use `--one-shot` instead of `--apply`
 <br/><br/>
