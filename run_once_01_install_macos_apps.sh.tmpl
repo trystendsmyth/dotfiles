@@ -12,130 +12,136 @@ brew "coreutils"
 brew "moreutils"
 # newer version of bash
 brew "bash"
-brew "bash-completion"
+brew "bash-completion@2"
 # newer version of zsh
 brew "zsh"
 brew "zsh-completions"
 
-brew "bitwarden-cli" || true
-brew "curl" || true
-brew "dashlane-cli" || true
-brew "direnv" || true
-brew "dockutil" || true
-brew "duti" || true
-brew "eza" || true
-brew "git" || true
-brew "git-delta" || true
-brew "gnupg" || true
-brew "m-cli" || true
-brew "mas" || true
-brew "pinentry-mac" || true
-brew "speedtest" || true
-brew "trash" || true
-brew "wget" || true
-brew "wifi-password" || true
+brew "bat"
+brew "bitwarden-cli"
+brew "curl"
+brew "dashlane-cli"
+brew "direnv"
+brew "dockutil"
+brew "duti"
+brew "eza"
+brew "fd"
+brew "fzf"
+brew "git"
+brew "git-delta"
+brew "gnupg"
+brew "jq"
+brew "m-cli"
+brew "mas"
+brew "pinentry-mac"
+brew "speedtest"
+brew "trash"
+brew "wget"
+brew "wifi-password"
 {{-   if eq .minimalinstall "false" }}
 {{-     if eq .workconfig "true" }}
-brew "gh" || true
-brew "glab" || true
-brew "lazygit" || true
-brew "vercel-cli" || true
-{{-     else }}
-brew "bradp/vv/vv" || true
+brew "gh"
+brew "glab"
+brew "lazygit"
+brew "vercel-cli"
 {{-     end }}
-brew "aria2" || true
-brew "go" || true
-brew "htop" || true
-brew "httpie" || true
-brew "irssi" || true
-brew "neovim" || true
-brew "newsboat" || true
-brew "nmap" || true
-brew "openssl" || true
-brew "peco" || true
-brew "pipenv" || true
-brew "pnpm" || true
-brew "pyenv" || true
-brew "uv" || true
-brew "ripgrep" || true
-brew "rust-analyzer" || true
-brew "stow" || true
-brew "tmux" || true
-brew "tmuxinator" || true
-brew "topgrade" || true
-brew "watch" || true
-brew "weechat" || true
-brew "xxh" || true
+brew "aria2"
+brew "btop"
+brew "ffmpeg"
+brew "go"
+brew "httpie"
+brew "irssi"
+brew "neovim"
+brew "newsboat"
+brew "nmap"
+brew "openssl"
+brew "peco"
+brew "pnpm"
+brew "pyenv"
+brew "uv"
+brew "ripgrep"
+brew "rust-analyzer"
+brew "stow"
+brew "tmux"
+brew "tmuxinator"
+brew "topgrade"
+brew "watch"
+brew "weechat"
+brew "xxh"
+brew "yt-dlp"
+brew "zoxide"
 {{-   end }}
 
 ##### casks #####
-cask "alfred" || true
-cask "appcleaner" || true
-cask "brave-browser" || true
-cask "dropbox" || true
-cask "expressvpn" || true
-cask "google-chrome" || true
-cask "iina" || true
-cask "kitty" || true
-cask "moom" || true
-cask "notion" || true
-cask "quicklook-video" || true
-cask "spotify" || true
+cask "alfred"
+cask "brave-browser"
+cask "dropbox"
+cask "google-chrome"
+cask "iina"
+cask "keka"
+cask "kitty"
+cask "moom"
+cask "notion"
+cask "pearcleaner"
+cask "protonvpn"
+cask "quicklook-video"
+cask "spotify"
+cask "tailscale-app"
 {{-   if eq .minimalinstall "false" }}
 {{-     if eq .workconfig "true" }}
-cask "studio-3t" || true
-cask "loom" || true
-cask "zoom" || true
+cask "studio-3t"
+cask "loom"
+cask "zoom"
 {{-     else }}
-cask "adium" || true
-cask "numi" || true
-cask "plex-media-player" || true
-cask "sublime-text" || true
-cask "tower2" || true
-cask "transmission" || true
-cask "tunnelblick" || true
+cask "numi"
+cask "plex"
+cask "transmission"
+cask "tunnelblick"
 
-cask "dotnet-sdk" || true
-cask "mono-mdk" || true
-cask "unity" || true
-cask "unity-hub" || true
+cask "dotnet-sdk"
+cask "mono-mdk"
+cask "unity"
+cask "unity-hub"
 {{-     end }}
 
-cask "bambu-studio" || true
-cask "cheatsheet" || true
-cask "cursor" || true
-cask "cyberduck" || true
-cask "dash" || true
-cask "docker" || true
-cask "firefox@developer-edition"|| true
-cask "gimp" || true
-cask "github" || true
-cask "imageoptim" || true
-cask "inkscape" || true
-cask "kaleidoscope@2" || true
-cask "keepingyouawake" || true
-cask "krita" || true
-cask "macdown" || true
-cask "microsoft-remote-desktop" || true
-cask "ngrok" || true
-cask "postman" || true
-cask "processing" || true
-cask "sequel-ace" || true
-cask "slack" || true
-cask "vagrant" || true
+cask "bambu-studio"
+cask "cheatsheet"
+cask "cursor"
+cask "cyberduck"
+cask "dash"
+cask "docker-desktop"
+cask "firefox@developer-edition"
+cask "gimp"
+cask "handbrake-app"
+cask "github"
+cask "imageoptim"
+cask "inkscape"
+cask "kaleidoscope@2"
+cask "keepingyouawake"
+cask "krita"
+cask "mark-text"
+cask "microsoft-remote-desktop"
+cask "ngrok"
+cask "orbstack"
+cask "postman"
+cask "processing"
+cask "sequel-ace"
+cask "slack"
+cask "utm"
 {{-     if (ne .chezmoi.arch "arm64") }}
-cask "virtualbox" || true
+cask "virtualbox"
 {{-     end }}
-cask "visual-studio-code" || true
+cask "visual-studio-code"
 {{-   end }}
 
 ##### fonts #####
 # install IBM Plex, an excellent modern font (https://www.ibm.com/plex/)
-cask "font-ibm-plex" || true
+cask "font-ibm-plex"
 # install Adobe Source Code Pro, an excellent mono space font for programming
-cask "font-source-code-pro" || true
+cask "font-source-code-pro"
 # install Nerd fonts for terminal
-cask "font-hack-nerd-font" || true
+cask "font-hack-nerd-font"
 EOF
+# brew bundle skips failed entries on its own; || true stops its exit code failing the chezmoi run.
 brew bundle --global || true
 {{ end }}

@@ -1,68 +1,171 @@
 #!/bin/bash
 {{ if (eq .chezmoi.os "linux") }}
+{{- /* Treat both 32-bit and 64-bit ARM (e.g. Raspberry Pi) as "arm". */}}
+{{- $isArm := or (eq .chezmoi.arch "arm") (eq .chezmoi.arch "arm64") }}
+{{- /* Arch and Arch derivatives (Manjaro, EndeavourOS, ...). */}}
+{{- $isArch := or (eq .chezmoi.osRelease.id "arch") (contains "arch" (index .chezmoi.osRelease "idLike" | default "")) }}
+{{- /* Kitty needs a GPU; fall back to guake on ARM boards. */}}
+{{- $terminal := "kitty" }}
+{{- if $isArm }}{{ $terminal = "guake" }}{{ end }}
+{{- $nerdFontsVersion := "v3.5.1" }}
 
-{{-   if (eq .chezmoi.osRelease.id "arch") }}
-sudo pacman -S aria2 --noconfirm
-sudo pacman -S base-devel --noconfirm
-sudo pacman -S coreutils --noconfirm
-sudo pacman -S eza --noconfirm
-sudo pacman -S gnupg --noconfirm
-sudo pacman -S kitty --noconfirm
-sudo pacman -S tmux --noconfirm
-sudo pacman -S topgrade --noconfirm
-sudo pacman -S zsh --noconfirm
-{{-   else }}
-# Add library for "eza"
-wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo tee /etc/apt/trusted.gpg.d/gierens.asc
-echo "deb http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list
-sudo apt update
-sudo apt install -y aria2 \
-    build-essential \
-    cargo \
+##### packages #####
+{{- if $isArch }}
+sudo pacman -S --needed --noconfirm \
+    aria2 \
+    base-devel \
+    bat \
     coreutils \
     curl \
+    direnv \
     eza \
+    fd \
+    ffmpeg \
     file \
+    fontconfig \
+    fzf \
+    git \
+    git-delta \
     gnupg \
-    {{ if (ne .chezmoi.arch "arm") }}
-    kitty \
-    {{ else }}
-    guake \
-    {{ end }}
-    procps \
+    htop \
+    jq \
+    {{ $terminal }} \
+    neovim \
+    procps-ng \
+    ripgrep \
+    tailscale \
     tmux \
-    zsh \
-    && apt clean
-sudo cargo install topgrade
-{{-   end }}
+    tmuxinator \
+    topgrade \
+    unzip \
+    wget \
+    yt-dlp \
+    zoxide \
+    zsh
+sudo systemctl enable --now tailscaled
+{{- else }}
+# Install every package that this release knows about and report the rest,
+# so one missing package on an older Debian/Ubuntu does not abort the lot.
+apt_install() {
+    local available=() missing=() pkg
+    for pkg in "$@"; do
+        if apt-cache show "$pkg" &>/dev/null; then
+            available+=("$pkg")
+        else
+            missing+=("$pkg")
+        fi
+    done
+    sudo apt install -y "${available[@]}"
+    if [ ${#missing[@]} -gt 0 ]; then
+        echo "Not available via apt on this release, skipped: ${missing[*]}"
+    fi
+}
 
-{{ if (ne .chezmoi.arch "arm") }}
-# Install Brew
-if ! command -v brew; then
+sudo apt update
+apt_install \
+    aria2 \
+    bat \
+    build-essential \
+    coreutils \
+    curl \
+    direnv \
+    fd-find \
+    ffmpeg \
+    file \
+    fontconfig \
+    fzf \
+    git \
+    git-delta \
+    gnupg \
+    htop \
+    jq \
+    {{ $terminal }} \
+    neovim \
+    procps \
+    ripgrep \
+    tmux \
+    tmuxinator \
+    unzip \
+    wget \
+    yt-dlp \
+    zoxide \
+    zsh
+
+# Debian renames these binaries to avoid clashes; expose them under their upstream names.
+command -v batcat &>/dev/null && ! command -v bat &>/dev/null && sudo ln -sf "$(command -v batcat)" /usr/local/bin/bat
+command -v fdfind &>/dev/null && ! command -v fd  &>/dev/null && sudo ln -sf "$(command -v fdfind)" /usr/local/bin/fd
+
+# Tailscale is not in the Debian/Ubuntu repos; the official script adds its repo and enables the service.
+if ! command -v tailscale &>/dev/null; then
+    curl -fsSL https://tailscale.com/install.sh | sh
+fi
+
+# eza is in Debian 13+ / Ubuntu 24.10+; older releases need the upstream repo.
+if ! apt-cache show eza &>/dev/null; then
+    sudo mkdir -p /etc/apt/keyrings
+    wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc \
+        | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
+    echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" \
+        | sudo tee /etc/apt/sources.list.d/gierens.list
+    sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
+    sudo apt update
+fi
+sudo apt install -y eza
+sudo apt clean
+
+# topgrade is not packaged for Debian/Ubuntu; install the prebuilt release binary.
+# (Compiling via cargo takes minutes, and `sudo cargo install` lands in root's PATH.)
+if ! command -v topgrade &>/dev/null; then
+    case "$(uname -m)" in
+        x86_64)  topgrade_target="x86_64-unknown-linux-gnu" ;;
+        aarch64) topgrade_target="aarch64-unknown-linux-gnu" ;;
+        armv7l)  topgrade_target="armv7-unknown-linux-gnueabihf" ;;
+        *)       topgrade_target="" ;;
+    esac
+    if [ -n "$topgrade_target" ]; then
+        topgrade_tag="$(curl -fsSL https://api.github.com/repos/topgrade-rs/topgrade/releases/latest \
+            | grep -oP '"tag_name":\s*"\K[^"]+')"
+        topgrade_tmp="$(mktemp -d)"
+        curl -fsSL "https://github.com/topgrade-rs/topgrade/releases/download/${topgrade_tag}/topgrade-${topgrade_tag}-${topgrade_target}.tar.gz" \
+            | tar -xz -C "$topgrade_tmp"
+        sudo install -m 755 "$topgrade_tmp/topgrade" /usr/local/bin/topgrade
+        rm -rf "$topgrade_tmp"
+    else
+        echo "No prebuilt topgrade binary for $(uname -m); skipping."
+    fi
+fi
+{{- end }}
+
+{{ if not $isArm }}
+##### homebrew #####
+# Homebrew on Linux only supports x86_64.
+if ! command -v brew &>/dev/null; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     brew analytics off
 else
     brew update --verbose
-	brew upgrade --verbose
-	brew cleanup -s
+    brew upgrade --verbose
+    brew cleanup -s
 fi
-{{ else }}
-# Guake Config
+{{- else }}
+##### guake config #####
 guake --restore-preferences ~/.config/guake/guake.conf
-{{-   end }}
+{{- end }}
 
 ##### fonts #####
-wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Hack.zip
-unzip Hack.zip -d ~/.local/share/fonts/
-rm Hack.zip
+# Same families as the macOS Brewfile: Hack Nerd Font, IBM Plex, Source Code Pro.
+# Nerd Fonts v3 moved many glyph codepoints, and both eza --icons and current
+# kitty themes expect v3.
+font_dir="$HOME/.local/share/fonts"
+font_tmp="$(mktemp -d)"
+mkdir -p "$font_dir"
+for font in Hack IBMPlexMono SourceCodePro; do
+    wget -qO "$font_tmp/$font.zip" "https://github.com/ryanoasis/nerd-fonts/releases/download/{{ $nerdFontsVersion }}/$font.zip" \
+        && unzip -oq "$font_tmp/$font.zip" -d "$font_dir/$font" -x 'LICENSE*' 'README*' \
+        || echo "Failed to install $font Nerd Font"
+done
+rm -rf "$font_tmp"
 
-wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/IBMPlexMono.zip
-unzip IBMPlexMono.zip -d ~/.local/share/fonts/
-rm IBMPlexMono.zip
-
-wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/SourceCodePro.zip
-unzip SourceCodePro.zip -d ~/.local/share/fonts/
-rm SourceCodePro.zip
-
-fc-cache -fv
+fc-cache -f
 {{ end }}
