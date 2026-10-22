@@ -1,12 +1,12 @@
+{{- $signingkey := index . "signingkey" | default "" -}}
 [user]
     name = {{ .fullname }}
     email = {{ .email }}
-{{ if eq .secrets "true" }}
-    signingkey = {{ (bitwarden "item" "gpg").notes }}
-{{ end }}
+{{- if $signingkey }}
+    signingkey = {{ $signingkey }}
+{{- end }}
 
 [core]
-    editor = code -w -n
     pager = delta
     excludesfile = ~/.gitignore
 
@@ -73,8 +73,11 @@
     process = git-lfs filter-process
     required = true
 
+{{- if $signingkey }}
+
 [commit]
     gpgsign = true
+{{- end }}
 
 [pull]
     rebase = true
@@ -100,6 +103,6 @@
     unignore = update-index --no-assume-unchanged
 {{ if eq .workconfig "true" }}
 
-# [url "ssh://git@github.com/"]
-#     insteadOf = https://github.com/
+[url "ssh://git@github.com/"]
+    insteadOf = https://github.com/
 {{ end }}

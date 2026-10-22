@@ -1,6 +1,9 @@
+# Machine-specific hosts (not managed by chezmoi)
+Include ~/.ssh/config.local
+
 Host *
   {{ if (eq .chezmoi.os "darwin") }}
   UseKeychain yes
   {{ end }}
   AddKeysToAgent yes
-  IdentityFile ~/.ssh/id_rsa
+  IdentityFile ~/.ssh/id_ed25519

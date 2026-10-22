@@ -1,5 +1,7 @@
 #!/bin/bash
 {{ if (eq .chezmoi.os "linux") }}
+{{- $isArch := or (eq .chezmoi.osRelease.id "arch") (contains "arch" (index .chezmoi.osRelease "idLike" | default "")) }}
+{{- $isFedora := or (eq .chezmoi.osRelease.id "fedora") (contains "fedora" (index .chezmoi.osRelease "idLike" | default "")) }}
 # Ask for the administrator password upfront.
 sudo -v &> /dev/null
 
@@ -11,39 +13,20 @@ while true; do
     kill -0 "$$" || exit
 done &> /dev/null &
 
-{{-   if (eq .chezmoi.osRelease.id "arch") -}}
+{{-   if $isArch }}
 
 sudo pacman -Syu
 sudo pacman -S git --noconfirm
 
-git clone https://aur.archlinux.org/snapd.git
-cd snapd
-makepkg -si
+{{-   else if $isFedora }}
 
-sudo systemctl enable --now snapd.socket
-sudo ln -s /var/lib/snapd/snap /snap
+sudo dnf upgrade -y --refresh
+sudo dnf install -y git
 
 {{-   else }}
 
 sudo apt update && sudo apt full-upgrade -y
 sudo apt install -y git
-sudo apt install -y snapd
-sudo service snapd start
-
-sudo snap install core
 
 {{-   end }}
-
-{{ if eq .secrets "true" }}
-sudo snap install bw
-
-export BW_CLIENTID={{- .bwclientid -}}
-export BW_CLIENTSECRET={{- .bwclientsecret -}}
-
-# Authenticate Bitwarden Session
-bw login --apikey
-bw unlock
-
-export BW_SESSION={{- env "BW_SESSION" -}}
-{{ end }}
 {{ end }}

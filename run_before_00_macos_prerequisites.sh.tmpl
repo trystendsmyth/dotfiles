@@ -27,15 +27,4 @@ else
 fi
 
 brew install bitwarden-cli
-
-{{ if eq .secrets "true" }}
-export BW_CLIENTID={{- .bwclientid -}}
-export BW_CLIENTSECRET={{- .bwclientsecret -}}
-
-# Authenticate Bitwarden Session
-bw login --apikey
-bw unlock
-
-export BW_SESSION={{- env "BW_SESSION" -}}
-{{ end }}
 {{ end }}

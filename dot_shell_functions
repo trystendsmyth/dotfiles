@@ -75,7 +75,7 @@ port2() { nc -zv localhost $1; }
 # Start an HTTP server from a directory, optionally specifying the port
 function server() {
   local port="${1:-8000}"
-  open "http://localhost:${port}/"
+  if command -v xdg-open &>/dev/null; then xdg-open "http://localhost:${port}/"; else open "http://localhost:${port}/"; fi
   python3 -m http.server "$port"
 }
 
@@ -86,7 +86,7 @@ dkbash() { docker exec -it $1 /bin/bash; }
 dklog() { docker logs -f $1; }
 
 # Docker: list the names of existing containers
-dknames() { docker ps --format '{{.Names}}' }
+dknames() { docker ps --format '{{.Names}}'; }
 
 # Test shell load times
 shelltime() {
