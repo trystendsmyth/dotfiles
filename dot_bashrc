@@ -1,0 +1,42 @@
+# Interactive bash only
+[[ $- == *i* ]] || return
+
+# change prompt
+PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$ "
+
+# gpg
+export GPG_TTY=$(tty)
+
+# Ignores all one-word commands for more efficient bash history searching
+HISTIGNORE=?
+# Long history without duplicates
+HISTCONTROL=ignoreboth:erasedups
+HISTSIZE=1000000
+
+# When the shell exits, append to the history file instead of overwriting it
+shopt -s histappend
+
+# Bash completion: Homebrew's bash-completion@2, else the distro's
+for f in "${HOMEBREW_PREFIX:-/opt/homebrew}/etc/profile.d/bash_completion.sh" \
+         /usr/local/etc/profile.d/bash_completion.sh \
+         /usr/share/bash-completion/bash_completion; do
+    [ -r "$f" ] && . "$f" && break
+done
+unset f
+
+# nvm (zsh uses the zsh-nvm plugin instead)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+
+# directory specific .envrc files
+command -v direnv &>/dev/null && eval "$(direnv hook bash)"
+
+# Aliases are managed here
+. ~/.shell_aliases
+
+# Functions are managed here
+. ~/.shell_functions
+
+# Work related additions
+[ -f ~/.work_profile ] && . ~/.work_profile

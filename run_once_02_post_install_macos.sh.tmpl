@@ -17,7 +17,7 @@ sudo chsh -s /usr/local/bin/zsh
 
 {{-   if eq .minimalinstall "false" }}
 # Install latest stable node and global packages
-nvm install stable && npm install -g eslint express fkill-cli gtop jshint jsxhint nodemon react-tools
+zsh -c 'source ~/.oh-my-zsh/custom/plugins/zsh-nvm/zsh-nvm.plugin.zsh && nvm install stable && npm install -g eslint fkill-cli gtop nodemon'
 
 # Equivalent of VS [gui] Command Palette  "Shell command: Install 'code' command in PATH"
 ln -sf /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code /usr/local/bin/code

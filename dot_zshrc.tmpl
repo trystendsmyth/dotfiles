@@ -5,24 +5,9 @@ zmodload zsh/zprof
 #   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 # fi
 
-# set paths
-export BREW_PATH="/opt/homebrew/sbin:/opt/homebrew/bin:/usr/local/sbin:/usr/local/bin"
-export PATH="$BREW_PATH:$PATH:$HOME/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-
-# set default editor
-export EDITOR='nvim'
-
-# utf-8 all the things
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-
-# set colors
-export TERM=xterm-256color
-export CLICOLOR=1
-export LS_COLORS="di=1;34:ln=1;35:so=1;31:pi=1;33:ex=1;32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43"
-
-# set default blocksize for ls, df, du
-export BLOCKSIZE=1k
+# Environment (PATH, EDITOR, locale, colors) comes from ~/.profile via ~/.zprofile.
+# Drop the duplicates nested login shells (e.g. tmux panes) add to PATH.
+typeset -U path
 
 # gpg
 export GPG_TTY=$(tty)
@@ -77,15 +62,14 @@ bindkey "^[[B" history-search-forward
 # Let Chezmoi handle external updates
 DISABLE_AUTO_UPDATE="true"
 
-{{ if (eq .chezmoi.os "darwin") }}
 # directory specific .envrc files
-eval "$(direnv hook zsh)"
-{{ else if (eq .chezmoi.os "linux") }}
-[ -d /home/linuxbrew/.linuxbrew ] && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-{{ end }}
+(( $+commands[direnv] )) && eval "$(direnv hook zsh)"
 
 # Zsh completion for brew
-FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+(( $+commands[brew] )) && FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+
+# Remote hosts rarely have kitty's terminfo
+[[ "$TERM" == xterm-kitty ]] && alias ssh='TERM=xterm-256color ssh'
 
 # Set "Oh My Zsh" plugins
 plugins=(zsh-autosuggestions zsh-history-substring-search zsh-nvm zsh-syntax-highlighting tmuxinator fzf zoxide)

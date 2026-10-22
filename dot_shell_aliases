@@ -9,13 +9,19 @@ alias ..='cd ../'                              # Go back 1 directory level
 alias ...='cd ../../'                          # Go back 2 directory levels
 alias ~="cd ~"                                 # ~: Go Home
 alias c='clear'                                # c: Clear terminal display
-alias f='open -a Finder ./'                    # f: Opens current directory in MacOS Finder
 alias ll='eza -Slhg --icons'                   # Full colorized listing information
 alias lla='eza -Slhga --icons'                 # Full and complete colorized listing information
 alias lr='eza -DT | less'                      # Full Recursive Directory Listing
 alias t="eza -lTL 1 --group-directories-first" # nice directory tree listing (long, human readable)
 alias tt="eza -TL 2 --group-directories-first" # nice directory tree listing, but just 2 levels
-alias ttop="top -R -F -s 10 -o rsize"          # ttop:  Recommended 'top' invocation to minimize resources
+
+if [[ "$OSTYPE" == darwin* ]]; then
+  alias f='open -a Finder ./'                  # f: Opens current directory in MacOS Finder
+  alias ttop="top -R -F -s 10 -o rsize"        # ttop:  Recommended 'top' invocation to minimize resources
+else
+  alias f='xdg-open .'                         # f: Opens current directory in the file manager
+  alias ttop="top -d 10 -o RES"                # ttop:  Recommended 'top' invocation to minimize resources
+fi
 
 # if we are in a tmate session, alias tmux as tmate
 if [[ $TMUX =~ tmate ]]; then alias tmux=tmate; fi

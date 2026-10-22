@@ -1,8 +1,10 @@
 #!/bin/bash
 {{ if (eq .chezmoi.os "linux") }}
-# Set zsh as default shell
-sudo chsh -s /usr/bin/zsh
+# Set zsh as default shell for the current user (not root).
+# usermod (shadow-utils) is on every distro; chsh is missing from minimal Fedora images.
+sudo usermod -s "$(command -v zsh)" "$USER"
 
-# Install latest stable node and global packages
-nvm install stable && npm install -g fkill-cli gtop
+# Install latest stable node and global packages.
+# nvm is a shell function provided by the zsh-nvm plugin, so it only exists inside zsh.
+zsh -c 'source ~/.oh-my-zsh/custom/plugins/zsh-nvm/zsh-nvm.plugin.zsh && nvm install stable && npm install -g fkill-cli gtop'
 {{ end }}

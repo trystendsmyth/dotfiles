@@ -1,0 +1,2 @@
+# zsh doesn't read ~/.profile on its own; load the shared login environment
+emulate sh -c '. ~/.profile'
