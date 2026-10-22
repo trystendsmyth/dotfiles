@@ -5,7 +5,9 @@ zmodload zsh/zprof
 #   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 # fi
 
-# Environment (PATH, EDITOR, locale, colors) comes from ~/.profile via ~/.zprofile.
+# Environment (PATH, EDITOR, locale, colors) comes from ~/.profile via ~/.zprofile
+# or the login session; load it here if neither did (e.g. before re-login).
+[[ -n $DOTFILES_PROFILE ]] || emulate sh -c '. ~/.profile'
 # Drop the duplicates nested login shells (e.g. tmux panes) add to PATH.
 typeset -U path
 

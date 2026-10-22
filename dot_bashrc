@@ -1,6 +1,9 @@
 # Interactive bash only
 [[ $- == *i* ]] || return
 
+# Load ~/.profile if neither a login shell nor the session already did
+[ -n "$DOTFILES_PROFILE" ] || . ~/.profile
+
 # change prompt
 PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$ "
 
