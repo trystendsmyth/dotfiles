@@ -150,6 +150,8 @@ EOF
 HOMEBREW_BUNDLE_CASK_SKIP="$(sed -n 's/^cask "\([^"]*\)".*/\1/p' "$HOME/.Brewfile" | tr '\n' ' ')"
 export HOMEBREW_BUNDLE_CASK_SKIP
 {{- end }}
+# Homebrew 7+ only loads formulae from taps you trust (older versions lack `brew trust`).
+brew trust --tap dashlane/tap showwin/speedtest 2>/dev/null || true
 # brew bundle skips failed entries on its own; || true stops its exit code failing the chezmoi run.
 brew bundle --global || true
 {{ end }}

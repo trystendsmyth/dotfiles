@@ -30,17 +30,19 @@ in_pty() {
 }
 
 echo "-- shells"
+out=$(mktemp)
 for sh in zsh bash; do
-    in_pty "$sh" -i -c exit >/dev/null 2>&1  # first start may set things up (zsh-nvm installs nvm)
-    in_pty sh -c "$sh -i -c exit 2>'$err'" >/dev/null
+    # (`-c exit` would make bash print "exit" to stderr)
+    in_pty "$sh" -i -c true >/dev/null 2>&1  # first start may set things up (zsh-nvm installs nvm)
+    in_pty sh -c "$sh -i -c true 2>'$err'" >/dev/null
     if [ ! -s "$err" ]; then pass "$sh -i starts with nothing on stderr"
     else bad "$sh -i starts with nothing on stderr:"; sed 's/^/        /' "$err"; fi
 done
 
 echo "-- starship"
 check "starship --version" starship --version
-prompt=$(zsh -i -c '_sp_precmd; starship prompt' 2>"$err")
-if [ -n "$prompt" ] && [ ! -s "$err" ] && [[ $prompt == *"$USER"* ]]; then
+in_pty sh -c "zsh -i -c '_sp_precmd; starship prompt' >'$out' 2>'$err'" >/dev/null
+if [ -s "$out" ] && [ ! -s "$err" ] && grep -q "$USER" "$out"; then
     pass "starship prints the prompt (with user@host) and no warnings"
 else
     bad "starship prompt:"; sed 's/^/        /' "$err"
@@ -48,8 +50,11 @@ fi
 
 echo "-- tmux"
 if [ -f ~/.tmux.conf ]; then
-    check "tmux loads ~/.tmux.conf" sh -c \
-        'tmux -L ci -f ~/.tmux.conf new-session -d -s ci && tmux -L ci source-file -n ~/.tmux.conf && tmux -L ci kill-server'
+    # tmux reports config errors as messages but still exits 0, so any output is a failure
+    tmux_out=$(tmux -L ci -f ~/.tmux.conf new-session -d -s ci 2>&1 &&
+        tmux -L ci source-file -n ~/.tmux.conf 2>&1; tmux -L ci kill-server 2>&1)
+    if [ -z "$tmux_out" ]; then pass "tmux loads ~/.tmux.conf without errors"
+    else bad "tmux loads ~/.tmux.conf without errors:"; printf '%s\n' "$tmux_out" | sed 's/^/        /'; fi
 else
     skip "tmux (~/.tmux.conf not installed: minimal install)"
 fi
@@ -88,5 +93,5 @@ diff_out=$(chezmoi diff --exclude=scripts)
 if [ -z "$diff_out" ]; then pass "second apply would change nothing (chezmoi diff is empty)"
 else bad "chezmoi diff is not empty:"; printf '%s\n' "$diff_out" | head -60 | sed 's/^/        /'; fi
 
-rm -f "$err"
+rm -f "$err" "$out"
 exit $fail

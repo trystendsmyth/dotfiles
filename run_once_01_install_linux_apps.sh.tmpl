@@ -31,7 +31,23 @@ has_systemd() {
 
 ##### packages #####
 {{- if $isArch }}
-sudo pacman -S --needed --noconfirm \
+# Install what the repos have and report the rest (tmuxinator and topgrade are AUR-only).
+pacman_install() {
+    local available=() missing=() pkg
+    for pkg in "$@"; do
+        if pacman -Si "$pkg" &>/dev/null || pacman -Sg "$pkg" &>/dev/null; then
+            available+=("$pkg")
+        else
+            missing+=("$pkg")
+        fi
+    done
+    sudo pacman -S --needed --noconfirm "${available[@]}"
+    if [ ${#missing[@]} -gt 0 ]; then
+        echo "Not in the Arch repos, skipped: ${missing[*]}"
+    fi
+}
+
+pacman_install \
     aria2 \
     base-devel \
     bat \
@@ -58,8 +74,6 @@ sudo pacman -S --needed --noconfirm \
     starship \
     tailscale \
     tmux \
-    tmuxinator \
-    topgrade \
     tree-sitter-cli \
     unzip \
     wget \
@@ -186,14 +200,15 @@ fi
 sudo apt install -y eza
 sudo apt clean
 {{- end }}
-{{- if not $isArch }}
+
+##### tools the distro lacks or ships too old (each step skips when it isn't needed) #####
 
 # Tailscale is not in the Debian/Ubuntu repos; the official script adds its repo and enables the service.
 if ! command -v tailscale &>/dev/null && has_systemd; then
     curl -fsSL https://tailscale.com/install.sh | sh
 fi
 
-# topgrade is not packaged for Debian/Ubuntu or Fedora; install the prebuilt release binary.
+# topgrade is not packaged for Debian/Ubuntu or Fedora, and is AUR-only on Arch; install the prebuilt release binary.
 # (Compiling via cargo takes minutes, and `sudo cargo install` lands in root's PATH.)
 if ! command -v topgrade &>/dev/null; then
     case "$(uname -m)" in
@@ -283,7 +298,6 @@ fi
 if ! command -v mise &>/dev/null && [ ! -x "$HOME/.local/bin/mise" ]; then
     curl -fsSL https://mise.run | sh
 fi
-{{- end }}
 
 {{ if $isArm }}
 ##### guake config #####
@@ -305,9 +319,9 @@ fi
 # Distro yt-dlp lags behind YouTube changes; brew keeps it current via topgrade.
 brew install yt-dlp
 {{- end }}
-{{- if $isFedora }}
+{{- if or $isFedora $isArch }}
 
-# Not packaged for Fedora.
+# Not packaged for Fedora, and AUR-only on Arch.
 brew install tmuxinator
 {{- end }}
 {{- end }}

@@ -18,9 +18,9 @@ targets=(
     "macos-intel darwin amd64 _ _"
 )
 for t in "${targets[@]}"; do
-  read -r name os arch id like <<<"$t"
-  # Templates skip some steps when CI is set; check both variants.
-  for ci in "" true; do
+    read -r name os arch id like <<<"$t"
+    # Templates skip some steps when CI is set; check both variants.
+    for ci in "" true; do
     for minimal in false true; do
         cfg="$tmp/$name-$minimal.toml"
         printf '[data]\n email="ci@example.com"\n fullname="CI"\n gituser="ci"\n minimalinstall="%s"\n workconfig="false"\n secrets="false"\n signingkey=""\n fakeos="%s"\n fakearch="%s"\n [data.fakerel]\n  id="%s"\n  idLike="%s"\n' \
@@ -41,7 +41,7 @@ for t in "${targets[@]}"; do
             fi
         done
     done
-  done
+    done
 done
 
 shellcheck -s sh -S warning .install-password-manager.sh bin/executable_tmux-copy || fail=1
