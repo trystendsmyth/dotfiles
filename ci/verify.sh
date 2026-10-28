@@ -20,7 +20,8 @@ minimal=$(chezmoi execute-template '{{ .minimalinstall }}')
 err=$(mktemp)
 echo "== $(uname -sm), minimal install: $minimal"
 
-# Interactive shells want a terminal.
+# Interactive shells want a terminal; without `script` the shell checks below would prove nothing.
+command -v script >/dev/null || { echo "FAIL: \`script\` (util-linux / bsdutils) is needed to run shells in a pty"; exit 1; }
 in_pty() {
     if [ "$os" = Darwin ]; then
         script -q /dev/null "$@"
@@ -45,7 +46,7 @@ in_pty sh -c "zsh -i -c '_sp_precmd; starship prompt' >'$out' 2>'$err'" >/dev/nu
 if [ -s "$out" ] && [ ! -s "$err" ] && grep -q "$USER" "$out"; then
     pass "starship prints the prompt (with user@host) and no warnings"
 else
-    bad "starship prompt:"; sed 's/^/        /' "$err"
+    bad "starship prompt (stdout, then stderr):"; head -c 600 "$out" | cat -v | sed 's/^/        /'; sed 's/^/        /' "$err"
 fi
 
 echo "-- tmux"

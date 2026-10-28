@@ -16,7 +16,12 @@
 
 # Latest release tag of a GitHub repo, from the /releases/latest redirect (no API rate limit).
 gh_latest_tag() {
-    curl -fsSLI -o /dev/null -w '%{url_effective}' "https://github.com/$1/releases/latest" | sed 's#.*/tag/##'
+    curl -fsSLI --retry 3 --retry-all-errors -o /dev/null -w '%{url_effective}' "https://github.com/$1/releases/latest" | sed 's#.*/tag/##'
+}
+
+# curl that survives transient network errors
+fetch() {
+    curl -fsSL --retry 3 --retry-all-errors "$@"
 }
 
 # version_ge A B: true if version A >= B
@@ -205,7 +210,7 @@ sudo apt clean
 
 # Tailscale is not in the Debian/Ubuntu repos; the official script adds its repo and enables the service.
 if ! command -v tailscale &>/dev/null && has_systemd; then
-    curl -fsSL https://tailscale.com/install.sh | sh
+    fetch https://tailscale.com/install.sh | sh
 fi
 
 # topgrade is not packaged for Debian/Ubuntu or Fedora, and is AUR-only on Arch; install the prebuilt release binary.
@@ -220,7 +225,7 @@ if ! command -v topgrade &>/dev/null; then
     if [ -n "$topgrade_target" ]; then
         topgrade_tag="$(gh_latest_tag topgrade-rs/topgrade)"
         topgrade_tmp="$(mktemp -d)"
-        curl -fsSL "https://github.com/topgrade-rs/topgrade/releases/download/${topgrade_tag}/topgrade-${topgrade_tag}-${topgrade_target}.tar.gz" \
+        fetch "https://github.com/topgrade-rs/topgrade/releases/download/${topgrade_tag}/topgrade-${topgrade_tag}-${topgrade_target}.tar.gz" \
             | tar -xz -C "$topgrade_tmp"
         sudo install -m 755 "$topgrade_tmp/topgrade" /usr/local/bin/topgrade
         rm -rf "$topgrade_tmp"
@@ -239,7 +244,7 @@ if ! version_ge "$(nvim --version 2>/dev/null | sed -n '1s/^NVIM v//p')" {{ $nvi
     esac
     if [ -n "$nvim_asset" ]; then
         nvim_tmp="$(mktemp -d)"
-        curl -fsSL "https://github.com/neovim/neovim/releases/latest/download/${nvim_asset}.tar.gz" \
+        fetch "https://github.com/neovim/neovim/releases/latest/download/${nvim_asset}.tar.gz" \
             | tar -xz -C "$nvim_tmp"
         sudo rm -rf /opt/nvim
         sudo mv "$nvim_tmp/$nvim_asset" /opt/nvim
@@ -260,7 +265,7 @@ if ! version_ge "$(tree-sitter --version 2>/dev/null | awk '{print $2}')" {{ $tr
     esac
     if [ -n "$ts_asset" ]; then
         ts_tmp="$(mktemp -d)"
-        curl -fsSL "https://github.com/tree-sitter/tree-sitter/releases/latest/download/${ts_asset}.gz" \
+        fetch "https://github.com/tree-sitter/tree-sitter/releases/latest/download/${ts_asset}.gz" \
             | gunzip > "$ts_tmp/tree-sitter"
         sudo install -m 755 "$ts_tmp/tree-sitter" /usr/local/bin/tree-sitter
         rm -rf "$ts_tmp"
@@ -280,7 +285,7 @@ if ! command -v lazygit &>/dev/null; then
     if [ -n "$lazygit_arch" ]; then
         lazygit_tag="$(gh_latest_tag jesseduffield/lazygit)"
         lazygit_tmp="$(mktemp -d)"
-        curl -fsSL "https://github.com/jesseduffield/lazygit/releases/download/${lazygit_tag}/lazygit_${lazygit_tag#v}_linux_${lazygit_arch}.tar.gz" \
+        fetch "https://github.com/jesseduffield/lazygit/releases/download/${lazygit_tag}/lazygit_${lazygit_tag#v}_linux_${lazygit_arch}.tar.gz" \
             | tar -xz -C "$lazygit_tmp" lazygit
         sudo install -m 755 "$lazygit_tmp/lazygit" /usr/local/bin/lazygit
         rm -rf "$lazygit_tmp"
@@ -291,12 +296,12 @@ fi
 
 # Starship is packaged on Debian 13 but not Ubuntu 24.04 or Fedora; its installer uses sudo itself.
 if ! command -v starship &>/dev/null; then
-    curl -fsSL https://starship.rs/install.sh | sh -s -- -y -b /usr/local/bin
+    fetch https://starship.rs/install.sh | sh -s -- -y -b /usr/local/bin
 fi
 
 # mise isn't in Debian, Ubuntu or Fedora; the official installer puts it in ~/.local/bin.
 if ! command -v mise &>/dev/null && [ ! -x "$HOME/.local/bin/mise" ]; then
-    curl -fsSL https://mise.run | sh
+    fetch https://mise.run | sh
 fi
 
 {{ if $isArm }}
@@ -306,7 +311,7 @@ guake --restore-preferences ~/.config/guake/guake.conf
 ##### homebrew #####
 # Homebrew on Linux only supports x86_64. CI skips it: it is slow and not what CI tests.
 if ! command -v brew &>/dev/null; then
-    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    NONINTERACTIVE=1 /bin/bash -c "$(fetch https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     brew analytics off
 else
