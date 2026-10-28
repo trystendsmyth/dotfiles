@@ -28,12 +28,6 @@
     exact = true
     stripComponents = 1
     refreshPeriod = "168h"
-[".oh-my-zsh/custom/themes/powerlevel10k"]
-    type = "archive"
-    url = "https://github.com/romkatv/powerlevel10k/archive/master.tar.gz"
-    exact = true
-    stripComponents = 1
-    refreshPeriod = "168h"
 [".tmux/powerline"]
     type = "archive"
     url = "https://github.com/erikw/tmux-powerline/archive/main.tar.gz"

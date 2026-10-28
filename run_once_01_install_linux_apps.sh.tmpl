@@ -10,6 +10,24 @@
 {{- $terminal := "kitty" }}
 {{- if $isArm }}{{ $terminal = "guake" }}{{ end }}
 {{- $nerdFontsVersion := "v3.5.1" }}
+{{- /* LazyVim's minimum Neovim, and nvim-treesitter's minimum tree-sitter CLI. */}}
+{{- $nvimMin := "0.11.2" }}
+{{- $treeSitterMin := "0.26.1" }}
+
+# Latest release tag of a GitHub repo, from the /releases/latest redirect (no API rate limit).
+gh_latest_tag() {
+    curl -fsSLI -o /dev/null -w '%{url_effective}' "https://github.com/$1/releases/latest" | sed 's#.*/tag/##'
+}
+
+# version_ge A B: true if version A >= B
+version_ge() {
+    [ "$(printf '%s\n' "$2" "$1" | sort -V | head -n1)" = "$2" ]
+}
+
+# Containers and some minimal installs run without systemd.
+has_systemd() {
+    [ -d /run/systemd/system ]
+}
 
 ##### packages #####
 {{- if $isArch }}
@@ -32,19 +50,25 @@ sudo pacman -S --needed --noconfirm \
     htop \
     jq \
     {{ $terminal }} \
+    lazygit \
+    mise \
     neovim \
     procps-ng \
     ripgrep \
+    starship \
     tailscale \
     tmux \
     tmuxinator \
     topgrade \
+    tree-sitter-cli \
     unzip \
     wget \
+    wl-clipboard \
+    xclip \
     yt-dlp \
     zoxide \
     zsh
-sudo systemctl enable --now tailscaled
+has_systemd && sudo systemctl enable --now tailscaled
 {{- else if $isFedora }}
 # Install what this release has and report the rest (RHEL clones lack some without EPEL).
 if dnf --version 2>/dev/null | grep -q dnf5; then
@@ -79,14 +103,17 @@ sudo dnf install -y $dnf_skip \
     ripgrep \
     tailscale \
     tmux \
+    tree-sitter-cli \
     unzip \
     wget \
+    wl-clipboard \
+    xclip \
 {{- if $isArm }}
     yt-dlp \
 {{- end }}
     zoxide \
     zsh
-command -v tailscale &>/dev/null && sudo systemctl enable --now tailscaled
+command -v tailscale &>/dev/null && has_systemd && sudo systemctl enable --now tailscaled
 {{- else }}
 # Install every package that this release knows about and report the rest,
 # so one missing package on an older Debian/Ubuntu does not abort the lot.
@@ -124,14 +151,18 @@ apt_install \
     htop \
     jq \
     {{ $terminal }} \
+    lazygit \
     neovim \
     pinentry-gnome3 \
     procps \
     ripgrep \
+    starship \
     tmux \
     tmuxinator \
     unzip \
     wget \
+    wl-clipboard \
+    xclip \
 {{- if $isArm }}
     yt-dlp \
 {{- end }}
@@ -158,7 +189,7 @@ sudo apt clean
 {{- if not $isArch }}
 
 # Tailscale is not in the Debian/Ubuntu repos; the official script adds its repo and enables the service.
-if ! command -v tailscale &>/dev/null; then
+if ! command -v tailscale &>/dev/null && has_systemd; then
     curl -fsSL https://tailscale.com/install.sh | sh
 fi
 
@@ -172,8 +203,7 @@ if ! command -v topgrade &>/dev/null; then
         *)       topgrade_target="" ;;
     esac
     if [ -n "$topgrade_target" ]; then
-        topgrade_tag="$(curl -fsSL https://api.github.com/repos/topgrade-rs/topgrade/releases/latest \
-            | grep -oP '"tag_name":\s*"\K[^"]+')"
+        topgrade_tag="$(gh_latest_tag topgrade-rs/topgrade)"
         topgrade_tmp="$(mktemp -d)"
         curl -fsSL "https://github.com/topgrade-rs/topgrade/releases/download/${topgrade_tag}/topgrade-${topgrade_tag}-${topgrade_target}.tar.gz" \
             | tar -xz -C "$topgrade_tmp"
@@ -183,11 +213,84 @@ if ! command -v topgrade &>/dev/null; then
         echo "No prebuilt topgrade binary for $(uname -m); skipping."
     fi
 fi
+
+# LazyVim needs Neovim {{ $nvimMin }}+, newer than Ubuntu 24.04 / Debian 13 ship. Use the official
+# release in /opt/nvim when the distro's is too old.
+if ! version_ge "$(nvim --version 2>/dev/null | sed -n '1s/^NVIM v//p')" {{ $nvimMin }}; then
+    case "$(uname -m)" in
+        x86_64)  nvim_asset="nvim-linux-x86_64" ;;
+        aarch64) nvim_asset="nvim-linux-arm64" ;;
+        *)       nvim_asset="" ;;
+    esac
+    if [ -n "$nvim_asset" ]; then
+        nvim_tmp="$(mktemp -d)"
+        curl -fsSL "https://github.com/neovim/neovim/releases/latest/download/${nvim_asset}.tar.gz" \
+            | tar -xz -C "$nvim_tmp"
+        sudo rm -rf /opt/nvim
+        sudo mv "$nvim_tmp/$nvim_asset" /opt/nvim
+        sudo ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim
+        rm -rf "$nvim_tmp"
+    else
+        echo "No Neovim release build for $(uname -m); LazyVim needs Neovim {{ $nvimMin }}+."
+    fi
+fi
+
+# nvim-treesitter (used by LazyVim) builds parsers with the tree-sitter CLI {{ $treeSitterMin }}+;
+# distro packages are older except on recent Fedora.
+if ! version_ge "$(tree-sitter --version 2>/dev/null | awk '{print $2}')" {{ $treeSitterMin }}; then
+    case "$(uname -m)" in
+        x86_64)  ts_asset="tree-sitter-linux-x64" ;;
+        aarch64) ts_asset="tree-sitter-linux-arm64" ;;
+        *)       ts_asset="" ;;
+    esac
+    if [ -n "$ts_asset" ]; then
+        ts_tmp="$(mktemp -d)"
+        curl -fsSL "https://github.com/tree-sitter/tree-sitter/releases/latest/download/${ts_asset}.gz" \
+            | gunzip > "$ts_tmp/tree-sitter"
+        sudo install -m 755 "$ts_tmp/tree-sitter" /usr/local/bin/tree-sitter
+        rm -rf "$ts_tmp"
+    else
+        echo "No tree-sitter CLI build for $(uname -m); skipping."
+    fi
+fi
+
+# lazygit is packaged on Debian 13 but not Ubuntu 24.04 or Fedora.
+if ! command -v lazygit &>/dev/null; then
+    case "$(uname -m)" in
+        x86_64)        lazygit_arch="x86_64" ;;
+        aarch64)       lazygit_arch="arm64" ;;
+        armv7l|armv6l) lazygit_arch="armv6" ;;
+        *)             lazygit_arch="" ;;
+    esac
+    if [ -n "$lazygit_arch" ]; then
+        lazygit_tag="$(gh_latest_tag jesseduffield/lazygit)"
+        lazygit_tmp="$(mktemp -d)"
+        curl -fsSL "https://github.com/jesseduffield/lazygit/releases/download/${lazygit_tag}/lazygit_${lazygit_tag#v}_linux_${lazygit_arch}.tar.gz" \
+            | tar -xz -C "$lazygit_tmp" lazygit
+        sudo install -m 755 "$lazygit_tmp/lazygit" /usr/local/bin/lazygit
+        rm -rf "$lazygit_tmp"
+    else
+        echo "No lazygit build for $(uname -m); skipping."
+    fi
+fi
+
+# Starship is packaged on Debian 13 but not Ubuntu 24.04 or Fedora; its installer uses sudo itself.
+if ! command -v starship &>/dev/null; then
+    curl -fsSL https://starship.rs/install.sh | sh -s -- -y -b /usr/local/bin
+fi
+
+# mise isn't in Debian, Ubuntu or Fedora; the official installer puts it in ~/.local/bin.
+if ! command -v mise &>/dev/null && [ ! -x "$HOME/.local/bin/mise" ]; then
+    curl -fsSL https://mise.run | sh
+fi
 {{- end }}
 
-{{ if not $isArm }}
+{{ if $isArm }}
+##### guake config #####
+guake --restore-preferences ~/.config/guake/guake.conf
+{{- else if not (env "CI") }}
 ##### homebrew #####
-# Homebrew on Linux only supports x86_64.
+# Homebrew on Linux only supports x86_64. CI skips it: it is slow and not what CI tests.
 if ! command -v brew &>/dev/null; then
     NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -207,9 +310,6 @@ brew install yt-dlp
 # Not packaged for Fedora.
 brew install tmuxinator
 {{- end }}
-{{- else }}
-##### guake config #####
-guake --restore-preferences ~/.config/guake/guake.conf
 {{- end }}
 
 ##### fonts #####

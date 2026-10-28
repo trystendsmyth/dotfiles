@@ -1,0 +1,192 @@
+# Starship prompt for zsh and bash, recreating the old powerlevel10k theme (see README).
+#
+# Rounded powerline caps take their colours from both neighbouring segments, and Starship
+# styles are static, so ~/.config/starship/prompt-state.sh works out before each prompt which
+# segment variants are visible and exports one _SP_* variable per variant. Each env_var module
+# below draws one variant with fixed colours. Variant names carry their colours:
+# _SP_DIR_236_HOME is the home directory after a background-236 segment.
+#
+# Colours are xterm-256 numbers: 236 segment background, 238 status background and thin
+# separators, 32 blue, 208 orange, 36 green, 178 yellow, 165 purple, 9 red, 15 white,
+# and ANSI 0/4/5 where p10k used the terminal palette.
+
+add_newline = true
+
+format = """
+╭─$os\
+${env_var._SP_ROOT}\
+${env_var._SP_CTX_32_236}${env_var._SP_CTX_0_236}${env_var._SP_CTX_32_0}${env_var._SP_CTX_0_0}\
+${env_var._SP_HOST_236}${env_var._SP_HOST_0}\
+${env_var._SP_RO_236}${env_var._SP_RO_0}${env_var._SP_DIR_RO}\
+${env_var._SP_DIR_236_HOME}${env_var._SP_DIR_236_SUB}${env_var._SP_DIR_236_OTHER}\
+${env_var._SP_DIR_0_HOME}${env_var._SP_DIR_0_SUB}${env_var._SP_DIR_0_OTHER}\
+${env_var._SP_GIT_208_36}${env_var._SP_GIT_208_178}${env_var._SP_GIT_208_165}\
+${env_var._SP_GIT_32_36}${env_var._SP_GIT_32_178}${env_var._SP_GIT_32_165}\
+${env_var._SP_GIT_4_36}${env_var._SP_GIT_4_178}${env_var._SP_GIT_4_165}\
+${env_var._SP_END_208}${env_var._SP_END_32}${env_var._SP_END_4}\
+$fill\
+${env_var._SP_DUR}${env_var._SP_JOBS_NONE}${env_var._SP_JOBS_32}\
+${env_var._SP_OK_NONE}${env_var._SP_OK_32}${env_var._SP_ERR_NONE}${env_var._SP_ERR_32}\
+${env_var._SP_NODE}${env_var._SP_NO_NODE}\
+$time${env_var._SP_SSH}[ ](fg:0)
+╰─\uF460\uF460\uF460"""
+
+[fill]
+symbol = " "
+style = ""
+
+##### left: OS icon
+
+[os]
+disabled = false
+format = "[ $symbol ](fg:236 bg:32)"
+
+[os.symbols]
+Macos = "\uF179"
+Linux = "\uF17C"
+Mint = "\uF30E "
+Ubuntu = "\uF31B "
+Debian = "\uF306"
+Raspbian = "\uF315"
+Fedora = "\uF30A "
+Arch = "\uF303"
+Manjaro = "\uF312 "
+EndeavourOS = "\uF17C"
+openSUSE = "\uF314 "
+RedHatEnterprise = "\uF316 "
+CentOS = "\uF304 "
+Redhat = "\uF316 "
+RockyLinux = "\uF17C"
+AlmaLinux = "\uF17C"
+Unknown = "\uF17C"
+
+##### left: root indicator, then user@host (background 236, or 0 over SSH)
+
+[env_var._SP_ROOT]
+format = "[\uE0B4](fg:32 bg:0)[ \uF198 ](fg:165 bg:0)"
+
+[env_var._SP_CTX_32_236]
+format = "[\uE0B4](fg:32 bg:236)[ ](fg:36 bg:236)[$env_value](fg:165 bg:236)[@](fg:15 bg:236)"
+
+[env_var._SP_CTX_0_236]
+format = "[\uE0B4](fg:0 bg:236)[ ](fg:36 bg:236)[$env_value](fg:165 bg:236)[@](fg:15 bg:236)"
+
+[env_var._SP_CTX_32_0]
+format = "[\uE0B4](fg:32 bg:0)[ ](fg:36 bg:0)[$env_value](fg:165 bg:0)[@](fg:15 bg:0)"
+
+[env_var._SP_CTX_0_0]
+format = "[\uE0B4](fg:0 bg:0)[ ](fg:36 bg:0)[$env_value](fg:165 bg:0)[@](fg:15 bg:0)"
+
+[env_var._SP_HOST_236]
+format = "[$env_value ](fg:36 bg:236)"
+
+[env_var._SP_HOST_0]
+format = "[$env_value ](fg:36 bg:0)"
+
+##### left: directory (orange in ~, blue elsewhere; lock segment and ANSI blue when read-only)
+
+[env_var._SP_RO_236]
+format = "[\uE0B4](fg:236 bg:32)[ \uF023 ](fg:15 bg:32)[\uE0B4](fg:32 bg:4)"
+
+[env_var._SP_RO_0]
+format = "[\uE0B4](fg:0 bg:32)[ \uF023 ](fg:15 bg:32)[\uE0B4](fg:32 bg:4)"
+
+[env_var._SP_DIR_RO]
+format = "[ \uF023 $env_value ](fg:0 bg:4)"
+
+[env_var._SP_DIR_236_HOME]
+format = "[\uE0B4](fg:236 bg:208)[ \uF015  $env_value ](fg:15 bg:208)"
+
+[env_var._SP_DIR_236_SUB]
+format = "[\uE0B4](fg:236 bg:32)[ \uF07C  $env_value ](fg:15 bg:32)"
+
+[env_var._SP_DIR_236_OTHER]
+format = "[\uE0B4](fg:236 bg:32)[ \uF115  $env_value ](fg:15 bg:32)"
+
+[env_var._SP_DIR_0_HOME]
+format = "[\uE0B4](fg:0 bg:208)[ \uF015  $env_value ](fg:15 bg:208)"
+
+[env_var._SP_DIR_0_SUB]
+format = "[\uE0B4](fg:0 bg:32)[ \uF07C  $env_value ](fg:15 bg:32)"
+
+[env_var._SP_DIR_0_OTHER]
+format = "[\uE0B4](fg:0 bg:32)[ \uF115  $env_value ](fg:15 bg:32)"
+
+##### left: git (green clean, yellow modified, purple untracked) or the closing cap
+
+[env_var._SP_GIT_208_36]
+format = "[\uE0B4](fg:208 bg:36)[ $env_value ](fg:236 bg:36)[\uE0B4](fg:36)"
+
+[env_var._SP_GIT_208_178]
+format = "[\uE0B4](fg:208 bg:178)[ $env_value ](fg:236 bg:178)[\uE0B4](fg:178)"
+
+[env_var._SP_GIT_208_165]
+format = "[\uE0B4](fg:208 bg:165)[ $env_value ](fg:236 bg:165)[\uE0B4](fg:165)"
+
+[env_var._SP_GIT_32_36]
+format = "[\uE0B4](fg:32 bg:36)[ $env_value ](fg:236 bg:36)[\uE0B4](fg:36)"
+
+[env_var._SP_GIT_32_178]
+format = "[\uE0B4](fg:32 bg:178)[ $env_value ](fg:236 bg:178)[\uE0B4](fg:178)"
+
+[env_var._SP_GIT_32_165]
+format = "[\uE0B4](fg:32 bg:165)[ $env_value ](fg:236 bg:165)[\uE0B4](fg:165)"
+
+[env_var._SP_GIT_4_36]
+format = "[\uE0B4](fg:4 bg:36)[ $env_value ](fg:236 bg:36)[\uE0B4](fg:36)"
+
+[env_var._SP_GIT_4_178]
+format = "[\uE0B4](fg:4 bg:178)[ $env_value ](fg:236 bg:178)[\uE0B4](fg:178)"
+
+[env_var._SP_GIT_4_165]
+format = "[\uE0B4](fg:4 bg:165)[ $env_value ](fg:236 bg:165)[\uE0B4](fg:165)"
+
+[env_var._SP_END_208]
+format = "[\uE0B4](fg:208)"
+
+[env_var._SP_END_32]
+format = "[\uE0B4](fg:32)"
+
+[env_var._SP_END_4]
+format = "[\uE0B4](fg:4)"
+
+##### right: duration (3 s or more) and background jobs, both blue
+
+[env_var._SP_DUR]
+format = "[\uE0B6](fg:32)[ $env_value \U000F006B ](fg:15 bg:32)"
+
+[env_var._SP_JOBS_NONE]
+format = "[\uE0B6](fg:32)[ $env_value  ](fg:236 bg:32)"
+
+[env_var._SP_JOBS_32]
+format = "[|](fg:238 bg:32)[ $env_value  ](fg:236 bg:32)"
+
+##### right: last exit status (always shown)
+
+[env_var._SP_OK_NONE]
+format = "[\uE0B6](fg:238)[ \uF00C  ](fg:36 bg:238)"
+
+[env_var._SP_OK_32]
+format = "[\uE0B6](fg:238 bg:32)[ \uF00C  ](fg:36 bg:238)"
+
+[env_var._SP_ERR_NONE]
+format = "[\uE0B6](fg:238)[ \uF00D ](fg:9 bg:238)"
+
+[env_var._SP_ERR_32]
+format = "[\uE0B6](fg:238 bg:32)[ \uF00D ](fg:9 bg:238)"
+
+##### right: Node version from nvm (hidden when it is nvm's default), time, SSH
+
+[env_var._SP_NODE]
+format = "[\uE0B6](fg:5 bg:238)[ $env_value \uE617  ](fg:0 bg:5)[\uE0B6](fg:236 bg:5)"
+
+[env_var._SP_NO_NODE]
+format = "[\uE0B6](fg:236 bg:238)"
+
+[time]
+disabled = false
+time_format = "%m/%d %H:%M"
+format = "[ $time \uF017  ](fg:15 bg:236)"
+
+[env_var._SP_SSH]
+format = "[\uE0B6](fg:0 bg:236)[ \uF489 ](fg:178 bg:0)"

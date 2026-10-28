@@ -3,7 +3,6 @@
 # sudo wget https://someonewhocares.org/hosts/hosts -P /etc/
 
 # Set correct permissions for GPG
-chown -R $(whoami) ~/.gnupg/
-chmod 700 ~/.gnupg/*
-chmod 700 ~/.gnupg
+chown -R "$(whoami)" ~/.gnupg/
+chmod -R go-rwx ~/.gnupg
 {{ end }}

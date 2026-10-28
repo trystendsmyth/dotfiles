@@ -12,18 +12,21 @@ while true; do
 done &> /dev/null &
 
 {{ if and (eq .chezmoi.os "darwin") (eq .chezmoi.arch "arm64") }}
-sudo softwareupdate --install-rosetta
+sudo softwareupdate --install-rosetta --agree-to-license
 {{ end }}
 
 # Install Brew
 if ! command -v brew; then
     NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    eval $(/opt/homebrew/bin/brew shellenv)
+    eval "$(/opt/homebrew/bin/brew shellenv)"
     brew analytics off
 else
     brew update --verbose
-	brew upgrade --verbose
-	brew cleanup -s
+{{- if not (env "CI") }}
+    # CI runners come with hundreds of formulae; upgrading them all is slow and untested here.
+    brew upgrade --verbose
+    brew cleanup -s
+{{- end }}
 fi
 
 brew install bitwarden-cli

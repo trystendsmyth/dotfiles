@@ -25,13 +25,17 @@ setw -g monitor-activity on
 # set faster escape time (ms)
 set escape-time 150
 
-# setup proper select/copy
+# setup proper select/copy (Linux: ~/bin/tmux-copy picks wl-copy or xclip)
+{{- $copy := "~/bin/tmux-copy" }}
+{{- if eq .chezmoi.os "darwin" }}{{ $copy = "pbcopy" }}{{ end }}
 # 'v' to begin selection as in Vim
 bind-key -T copy-mode-vi v send -X begin-selection
-bind-key -T copy-mode-vi y send -X copy-pipe-and-cancel "pbcopy"
+bind-key -T copy-mode-vi y send -X copy-pipe-and-cancel "{{ $copy }}"
 # update default binding of `Enter` to also use copy-pipe
 unbind -T copy-mode-vi Enter
-bind-key -T copy-mode-vi Enter send -X copy-pipe-and-cancel "pbcopy"
+bind-key -T copy-mode-vi Enter send -X copy-pipe-and-cancel "{{ $copy }}"
+# also send copies to the outer terminal via OSC 52 (kitty supports it), e.g. over SSH
+set -g set-clipboard on
 
 # K to clear screen
 bind K send-keys -R

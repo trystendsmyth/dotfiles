@@ -33,8 +33,10 @@ brew "gnupg"
 brew "jq"
 brew "m-cli"
 brew "mas"
+brew "mise"
 brew "pinentry-mac"
 brew "speedtest"
+brew "starship"
 brew "trash"
 brew "wget"
 brew "wifi-password"
@@ -42,7 +44,6 @@ brew "wifi-password"
 {{-     if eq .workconfig "true" }}
 brew "gh"
 brew "glab"
-brew "lazygit"
 brew "vercel-cli"
 {{-     end }}
 brew "aria2"
@@ -51,6 +52,7 @@ brew "ffmpeg"
 brew "go"
 brew "httpie"
 brew "irssi"
+brew "lazygit"
 brew "neovim"
 brew "newsboat"
 brew "nmap"
@@ -65,6 +67,7 @@ brew "stow"
 brew "tmux"
 brew "tmuxinator"
 brew "topgrade"
+brew "tree-sitter-cli"
 brew "watch"
 brew "weechat"
 brew "xxh"
@@ -142,6 +145,10 @@ cask "font-source-code-pro"
 # install Nerd fonts for terminal
 cask "font-hack-nerd-font"
 EOF
+{{- if env "CI" }}
+# CI skips casks: dozens of GUI app downloads that CI doesn't check.
+export HOMEBREW_BUNDLE_CASK_SKIP="$(sed -n 's/^cask "\([^"]*\)".*/\1/p' "$HOME/.Brewfile" | tr '\n' ' ')"
+{{- end }}
 # brew bundle skips failed entries on its own; || true stops its exit code failing the chezmoi run.
 brew bundle --global || true
 {{ end }}

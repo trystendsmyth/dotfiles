@@ -1,19 +1,12 @@
 #!/bin/bash
 {{ if (eq .chezmoi.os "darwin") }}
-# Add brew bash path to shells
-{{-   if (eq .chezmoi.arch "arm64") }}
-sudo grep -qxF '/opt/homebrew/bin/bash' /etc/shells || echo '/opt/homebrew/bin/bash' >> /etc/shells
-
-# Add zsh bash path to shells and set as default
-sudo grep -qxF '/opt/homebrew/bin/zsh' /etc/shells || echo '/opt/homebrew/bin/zsh' >> /etc/shells
-sudo chsh -s /opt/homebrew/bin/zsh
-{{-   else }}
-grep -qxF '/usr/local/bin/bash' /etc/shells || echo '/usr/local/bin/bash' >> /etc/shells
-
-# Add zsh bash path to shells and set as default
-grep -qxF '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' >> /etc/shells
-sudo chsh -s /usr/local/bin/zsh
-{{-   end }}
+{{- $brewBin := "/usr/local/bin" }}
+{{- if (eq .chezmoi.arch "arm64") }}{{ $brewBin = "/opt/homebrew/bin" }}{{ end }}
+# Add Homebrew's bash and zsh to the allowed shells, and make zsh the user's (not root's) shell
+for shell in {{ $brewBin }}/bash {{ $brewBin }}/zsh; do
+    grep -qxF "$shell" /etc/shells || echo "$shell" | sudo tee -a /etc/shells >/dev/null
+done
+sudo chsh -s {{ $brewBin }}/zsh "$USER"
 
 {{-   if eq .minimalinstall "false" }}
 # Install latest stable node and global packages
@@ -60,7 +53,9 @@ code --install-extension yclepticStudios.unity-snippets
 {{ end }}
 
 # Default IINA (media files)
-while read -r ext; do
-    duti -s com.colliderli.iina "$ext" all;
-done <".config/.duti/iina.txt"
+if [ -d /Applications/IINA.app ]; then
+    while read -r ext; do
+        duti -s com.colliderli.iina "$ext" all
+    done <".config/.duti/iina.txt"
+fi
 {{ end }}
