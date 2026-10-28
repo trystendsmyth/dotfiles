@@ -4,7 +4,7 @@
 # Load ~/.profile if neither a login shell nor the session already did
 [ -n "$DOTFILES_PROFILE" ] || . ~/.profile
 
-# change prompt
+# change prompt (fallback when Starship isn't installed)
 PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$ "
 
 # gpg
@@ -43,3 +43,19 @@ command -v direnv &>/dev/null && eval "$(direnv hook bash)"
 
 # Work related additions
 [ -f ~/.work_profile ] && . ~/.work_profile
+
+# Starship prompt, same ~/.config/starship.toml as zsh. Last, so that hooks added to
+# PROMPT_COMMAND above (direnv) run inside Starship's and don't hide the exit status.
+if command -v starship &>/dev/null; then
+    . ~/.config/starship/prompt-state.sh
+    _sp_bash_precmd() {
+        local dur=
+        # Starship measures the duration after this hook runs, so take it the same way here.
+        if [ -n "${STARSHIP_START_TIME-}" ] && [ -n "${EPOCHREALTIME-}" ]; then
+            dur=$(( ${EPOCHREALTIME/[.,]/} / 1000 - STARSHIP_START_TIME ))
+        fi
+        _sp_prompt_state "$dur" "${NUM_JOBS:-0}" "$STARSHIP_CMD_STATUS"
+    }
+    starship_precmd_user_func=_sp_bash_precmd
+    eval "$(starship init bash)"
+fi

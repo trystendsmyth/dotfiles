@@ -1,0 +1,4 @@
+# powerlevel10k, replaced by Starship, and its caches
+.oh-my-zsh/custom/themes/powerlevel10k
+.cache/gitstatus
+.cache/p10k-*

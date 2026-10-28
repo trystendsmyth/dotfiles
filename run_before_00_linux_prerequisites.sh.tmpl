@@ -15,7 +15,7 @@ done &> /dev/null &
 
 {{-   if $isArch }}
 
-sudo pacman -Syu
+sudo pacman -Syu --noconfirm
 sudo pacman -S git --noconfirm
 
 {{-   else if $isFedora }}

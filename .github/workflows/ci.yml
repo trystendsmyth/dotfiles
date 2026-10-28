@@ -1,0 +1,106 @@
+# Applies this checkout with `chezmoi init --apply` on Linux containers and macOS, then runs
+# ci/verify.sh. Weekly too: the externals (oh-my-zsh, plugins) and upstream installers can
+# break without any commit here.
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install chezmoi
+        run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/bin"
+      - name: Shellcheck rendered scripts
+        run: PATH="$HOME/bin:$PATH" ci/lint.sh
+
+  linux:
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - ubuntu:24.04                  # Linux Mint 22's base
+          - linuxmintd/mint22-amd64       # Linux Mint's own image
+          - fedora:latest
+          - archlinux:latest
+        minimal: [false, true]
+    container: ${{ matrix.image }}
+    name: linux (${{ matrix.image }}, minimal=${{ matrix.minimal }})
+    env:
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - name: Install sudo, git, curl and a UTF-8 locale
+        run: |
+          if command -v apt-get >/dev/null; then
+            # Docker's Ubuntu image skips /usr/share/doc, where Debian's fzf keeps its zsh
+            # key bindings; install packages the way a real system does.
+            rm -f /etc/dpkg/dpkg.cfg.d/excludes
+            apt-get update
+            apt-get install -y sudo git curl ca-certificates locales bsdutils
+            sed -i 's/^# *en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
+            locale-gen
+          elif command -v dnf >/dev/null; then
+            dnf install -y sudo git curl ca-certificates glibc-langpack-en util-linux-script shadow-utils
+          else
+            pacman -Syu --noconfirm sudo git curl ca-certificates
+            sed -i 's/^#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
+            locale-gen
+          fi
+      - uses: actions/checkout@v7
+      - name: Create a sudo user (the scripts call sudo and usermod on $USER)
+        run: |
+          useradd -m -s /bin/bash ci
+          printf '%s\n' 'ci ALL=(ALL) NOPASSWD: ALL' 'Defaults env_keep += "DEBIAN_FRONTEND"' > /etc/sudoers.d/ci
+          cp -r "$GITHUB_WORKSPACE" /home/ci/dotfiles
+          chown -R ci:ci /home/ci/dotfiles
+      - name: chezmoi init --apply
+        run: |
+          sudo -u ci -H env CI=true DEBIAN_FRONTEND=noninteractive LANG=en_US.UTF-8 bash -c '
+            set -e
+            cd ~
+            sh -c "$(curl -fsLS get.chezmoi.io)" -- -b ~/bin
+            ~/bin/chezmoi init --apply --no-tty --source ~/dotfiles \
+              --promptString "Email=ci@example.com" \
+              --promptString "Full name=CI" \
+              --promptString "Git username=ci" \
+              --promptBool "Minimal install (y/n)=${{ matrix.minimal }}" \
+              --promptBool "Work Computer (y/n)=false" \
+              --promptString "GPG signing key ID (blank to disable commit signing)="'
+      - name: Verify
+        run: sudo -u ci -H env CI=true LANG=en_US.UTF-8 bash ~ci/dotfiles/ci/verify.sh
+
+  macos:
+    needs: lint
+    runs-on: macos-latest
+    timeout-minutes: 60
+    name: macos (minimal)
+    env:
+      CI: true
+    steps:
+      - uses: actions/checkout@v7
+      - name: chezmoi init --apply
+        run: |
+          sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/bin"
+          "$HOME/bin/chezmoi" init --apply --no-tty --source "$GITHUB_WORKSPACE" \
+            --promptString "Email=ci@example.com" \
+            --promptString "Full name=CI" \
+            --promptString "Git username=ci" \
+            --promptBool "Minimal install (y/n)=true" \
+            --promptBool "Work Computer (y/n)=false" \
+            --promptString "GPG signing key ID (blank to disable commit signing)="
+      - name: Verify
+        run: bash ci/verify.sh

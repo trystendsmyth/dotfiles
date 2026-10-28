@@ -1,9 +1,5 @@
-# Enable Zsh profiler
-zmodload zsh/zprof
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-# fi
+# Profile shell startup with `ZSH_PROFILE=1 zsh -i -c exit`
+[[ -n $ZSH_PROFILE ]] && zmodload zsh/zprof
 
 # Environment (PATH, EDITOR, locale, colors) comes from ~/.profile via ~/.zprofile
 # or the login session; load it here if neither did (e.g. before re-login).
@@ -74,7 +70,10 @@ DISABLE_AUTO_UPDATE="true"
 [[ "$TERM" == xterm-kitty ]] && alias ssh='TERM=xterm-256color ssh'
 
 # Set "Oh My Zsh" plugins
-plugins=(zsh-autosuggestions zsh-history-substring-search zsh-nvm zsh-syntax-highlighting tmuxinator fzf zoxide)
+plugins=(zsh-autosuggestions zsh-history-substring-search zsh-nvm zsh-syntax-highlighting tmuxinator)
+# These plugins print an error on every shell start when their tool is missing
+(( $+commands[fzf] )) && plugins+=(fzf)
+(( $+commands[zoxide] )) && plugins+=(zoxide)
 
 # Zsh theme
 source ~/.zsh_theme
@@ -87,3 +86,5 @@ source ~/.shell_functions
 
 # Work related additions
 test -f ~/.work_profile && source ~/.work_profile
+
+[[ -n $ZSH_PROFILE ]] && zprof
