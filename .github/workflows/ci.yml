@@ -54,7 +54,7 @@ jobs:
             sed -i 's/^# *en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
             locale-gen
           elif command -v dnf >/dev/null; then
-            dnf install -y sudo git curl ca-certificates glibc-langpack-en util-linux shadow-utils
+            dnf install -y sudo git curl ca-certificates glibc-langpack-en util-linux-script shadow-utils
           else
             pacman -Syu --noconfirm sudo git curl ca-certificates
             sed -i 's/^#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
