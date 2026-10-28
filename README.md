@@ -54,22 +54,6 @@ Linux install takes from the upstream releases when the distro's packages are ol
 
     chezmoi re-add ~/.config/nvim/lazy-lock.json
 <br/><br/>
-## mise
-***
-[mise](https://mise.jdx.dev) manages per-project tools from a project's `mise.toml`. nvm and pyenv manage
-Node and Python: the global config (`~/.config/mise/config.toml`) has no Node or Python, and mise ignores
-`.nvmrc`, `.node-version` and `.python-version`.
-
-To move Node and Python to mise instead:
-1. Add `node = "lts"` and `python` to `[tools]` in the global mise config, and set
-   `idiomatic_version_file_enable_tools = ["node", "python"]`.
-2. Remove the zsh-nvm archive from `.chezmoiexternal.toml`, the `NVM_*` settings and lazy-load block in
-   `dot_zshrc.tmpl`, and the nvm lines in `dot_bashrc` and `dot_huskyrc`.
-3. Replace `nvm install stable` with `mise install` in both `run_once_02_post_install_*` scripts, keeping
-   the `npm install -g` list.
-4. Remove `brew "pyenv"` and the `PYENV_*` lines in `dot_work_profile.tmpl`.
-5. Point the prompt's Node segment (`_SP_NODE` in `prompt-state.sh`) at mise instead of nvm.
-<br/><br/>
 ## tmux
 ***
 Copy mode's `y` and `Enter` copy to the system clipboard: `pbcopy` on macOS, and `~/bin/tmux-copy` on Linux,

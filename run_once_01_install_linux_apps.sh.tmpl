@@ -72,7 +72,6 @@ pacman_install \
     jq \
     {{ $terminal }} \
     lazygit \
-    mise \
     neovim \
     procps-ng \
     ripgrep \
@@ -297,11 +296,6 @@ fi
 # Starship is packaged on Debian 13 but not Ubuntu 24.04 or Fedora; its installer uses sudo itself.
 if ! command -v starship &>/dev/null; then
     fetch https://starship.rs/install.sh | sh -s -- -y -b /usr/local/bin
-fi
-
-# mise isn't in Debian, Ubuntu or Fedora; the official installer puts it in ~/.local/bin.
-if ! command -v mise &>/dev/null && [ ! -x "$HOME/.local/bin/mise" ]; then
-    fetch https://mise.run | sh
 fi
 
 {{ if $isArm }}

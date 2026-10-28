@@ -11,7 +11,7 @@ check() {
     if "$@"; then pass "$name"; else bad "$name"; fi
 }
 
-# The environment a new login session gets (PATH: ~/bin for chezmoi, ~/.local/bin for mise, ...).
+# The environment a new login session gets (PATH: ~/bin for chezmoi, Linuxbrew, ...).
 # shellcheck disable=SC1090
 . ~/.profile
 export TERM=xterm-256color
@@ -71,8 +71,7 @@ else
     skip "neovim (not installed: minimal macOS install)"
 fi
 
-echo "-- mise, nvm"
-check "mise --version" mise --version
+echo "-- nvm"
 if [ -d ~/.nvm/versions/node ]; then
     node_path=$(zsh -i -c 'node -e "console.log(process.execPath)"' 2>/dev/null | tail -n1)
     check "node in zsh comes from nvm ($node_path)" test "${node_path#"$HOME"/.nvm/}" != "$node_path"
@@ -81,7 +80,7 @@ else
 fi
 
 echo "-- core tools"
-tools=(fzf eza bat fd delta starship mise)
+tools=(fzf eza bat fd delta starship)
 if [ "$os" = Linux ] || [ "$minimal" = false ]; then
     tools+=(zoxide rg lazygit tmux nvim tree-sitter)
 fi
