@@ -18,7 +18,9 @@ targets=(
     "macos-intel darwin amd64 _ _"
 )
 for t in "${targets[@]}"; do
-    read -r name os arch id like <<<"$t"
+  read -r name os arch id like <<<"$t"
+  # Templates skip some steps when CI is set; check both variants.
+  for ci in "" true; do
     for minimal in false true; do
         cfg="$tmp/$name-$minimal.toml"
         printf '[data]\n email="ci@example.com"\n fullname="CI"\n gituser="ci"\n minimalinstall="%s"\n workconfig="false"\n secrets="false"\n signingkey=""\n fakeos="%s"\n fakearch="%s"\n [data.fakerel]\n  id="%s"\n  idLike="%s"\n' \
@@ -27,18 +29,19 @@ for t in "${targets[@]}"; do
             # Stand-ins for .chezmoi.os/arch/osRelease, so one machine renders every platform.
             src="$(sed -e 's/\.chezmoi\.osRelease/.fakerel/g' -e 's/\.chezmoi\.os/.fakeos/g' \
                 -e 's/\.chezmoi\.arch/.fakearch/g' "$f")"
-            out="$tmp/$name-$minimal-$f.sh"
-            if ! chezmoi --config "$cfg" --source "$tmp" execute-template "$src" > "$out"; then
-                echo "RENDER FAILED: $f ($name, minimal=$minimal)"; fail=1; continue
+            out="$tmp/$name-$minimal-ci$ci-$f.sh"
+            if ! CI=$ci chezmoi --config "$cfg" --source "$tmp" execute-template "$src" > "$out"; then
+                echo "RENDER FAILED: $f ($name, minimal=$minimal, CI=$ci)"; fail=1; continue
             fi
             # Scripts for other platforms render to just the shebang.
             [ "$(grep -cv '^\s*$' "$out")" -le 1 ] && continue
             if ! shellcheck -s bash -S warning "$out" > "$out.log"; then
-                echo "SHELLCHECK: $f ($name, minimal=$minimal)"
+                echo "SHELLCHECK: $f ($name, minimal=$minimal, CI=$ci)"
                 sed "s#$out#$f#" "$out.log"; fail=1
             fi
         done
     done
+  done
 done
 
 shellcheck -s sh -S warning .install-password-manager.sh bin/executable_tmux-copy || fail=1

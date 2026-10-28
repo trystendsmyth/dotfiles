@@ -147,7 +147,8 @@ cask "font-hack-nerd-font"
 EOF
 {{- if env "CI" }}
 # CI skips casks: dozens of GUI app downloads that CI doesn't check.
-export HOMEBREW_BUNDLE_CASK_SKIP="$(sed -n 's/^cask "\([^"]*\)".*/\1/p' "$HOME/.Brewfile" | tr '\n' ' ')"
+HOMEBREW_BUNDLE_CASK_SKIP="$(sed -n 's/^cask "\([^"]*\)".*/\1/p' "$HOME/.Brewfile" | tr '\n' ' ')"
+export HOMEBREW_BUNDLE_CASK_SKIP
 {{- end }}
 # brew bundle skips failed entries on its own; || true stops its exit code failing the chezmoi run.
 brew bundle --global || true
