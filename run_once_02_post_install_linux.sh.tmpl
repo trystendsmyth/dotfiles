@@ -6,5 +6,15 @@ sudo usermod -s "$(command -v zsh)" "$USER"
 
 # Install latest stable node and global packages.
 # nvm is a shell function provided by the zsh-nvm plugin, so it only exists inside zsh.
-zsh -c 'source ~/.oh-my-zsh/custom/plugins/zsh-nvm/zsh-nvm.plugin.zsh && nvm install stable && npm install -g fkill-cli gtop'
+zsh -c 'source ~/.oh-my-zsh/custom/plugins/zsh-nvm/zsh-nvm.plugin.zsh && { nvm install -b stable || nvm install -b stable || nvm install -b stable; } && npm install -g fkill-cli gtop'
+
+# Install LazyVim's plugins at the versions in lazy-lock.json. On a fresh install lazy.nvim
+# installs LazyVim first and rewrites the lockfile with only that, so the other plugins arrive
+# at their latest commits; put the lockfile back and restore once everything is installed.
+if command -v nvim &>/dev/null; then
+    nvim --headless "+Lazy! restore" +qa &&
+        cp {{ joinPath .chezmoi.sourceDir "dot_config/nvim/lazy-lock.json" | quote }} ~/.config/nvim/lazy-lock.json &&
+        nvim --headless "+Lazy! restore" +qa ||
+        echo "Couldn't install the Neovim plugins now; LazyVim installs them on first launch."
+fi
 {{ end }}
