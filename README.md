@@ -46,11 +46,13 @@ Profile zsh startup with `ZSH_PROFILE=1 zsh -i -c exit`.
 ## Neovim
 ***
 `~/.config/nvim` is a [LazyVim](https://www.lazyvim.org) setup with the TypeScript, JSON, YAML, Markdown,
-Tailwind, Docker, Python, Go and Rust extras, ESLint and Prettier. Plugins install on first launch; Mason
-installs the language servers. LazyVim needs Neovim 0.11.2 or newer and the tree-sitter CLI, which the
-Linux install takes from the upstream releases when the distro's packages are older.
+Tailwind, Docker, Python, Go and Rust extras, ESLint and Prettier. The install sets up the plugins; Mason
+installs the language servers on first launch. LazyVim needs Neovim 0.11.2 or newer and the tree-sitter
+CLI, which the Linux install takes from the upstream releases when the distro's packages are older.
 
-`lazy-lock.json` pins plugin versions. After `:Lazy update`, save the new versions back to this repo:
+`lazy-lock.json` pins plugin versions. On a fresh install lazy.nvim fetches LazyVim before the rest and
+loses the other pins on the way, so the install puts the lockfile back and runs `:Lazy restore` once all
+plugins are present. After `:Lazy update`, save the new versions back to this repo:
 
     chezmoi re-add ~/.config/nvim/lazy-lock.json
 <br/><br/>
